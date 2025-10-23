@@ -25,14 +25,17 @@ namespace QLCHBanDienThoaiMoi.Controllers
             var sanPhams = _context.SanPham
                             .Include(s => s.DanhMucSanPham)
                             .Include(s => s.KhuyenMai)
-                            .OrderByDescending(s => s.KhuyenMai != null ? s.KhuyenMai.GiaTri : 0);
-            var totalItems = await _context.SanPham.AsNoTracking().CountAsync();
-            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-            var pagedSanPhams = await sanPhams.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            ViewBag.TotalItems = totalItems;
+                            .AsNoTracking();
+            var orderSanPham = sanPhams.OrderByDescending(s => s.KhuyenMai != null ? s.KhuyenMai.GiaTri : 0).ThenByDescending(s => s.Id);
+            //Phân trang
+            var pagedSanPhams = await orderSanPham.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            //Thông tin phân trang
+            var totalItems = await sanPhams.CountAsync();
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
-            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+           
 
             var soSanPham = await _context.GioHang.CountAsync();
             ViewBag.SoSanPham = soSanPham;

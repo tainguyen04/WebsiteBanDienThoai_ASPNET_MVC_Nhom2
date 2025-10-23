@@ -6,46 +6,98 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
+<p class="fs-6">
+    <strong>Giỏ hàng của bạn</strong>
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.SanPham.TenSanPham)
+    <thead class="table-primary">
+        <tr class="text-center">
+            <th class="text-start">
+                <input type="checkbox" id="select-all" /> Chọn tất cả
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SanPham.GiaBan)
+                @Html.DisplayName("Hình ảnh")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SoLuong)
+                @Html.DisplayName("STT")
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayName("Tên sản phẩm")
+            </th>
+            <th>
+                @Html.DisplayName("Giá bán")
+            </th>
+            <th>
+                @Html.DisplayName("Số lượng")
+            </th>
+            <th>
+                @Html.DisplayName("Thành tiền")
+            </th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.SanPham.TenSanPham)
-            </td>
-            <td>
-                @Html.FormatPrice(item.SanPham.GiaKhuyenMai)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SoLuong)
-            </td>
-            <td class="text-center">
-                
+        @{
+            int stt = 1;
+        }
+
+        @foreach (var item in Model)
+        {
+            var totalPrice = item.SanPham.GiaKhuyenMai * item.SoLuong;
+            <tr>
+                <td>
+                    <input type="checkbox" class="product-checkbox" data-total="@totalPrice" data-id="@item.Id" />
+                </td>
+                <td>
+                    <img src="~/images/@item.SanPham.HinhAnh"
+                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+                </td>
+                <td>
+                    @stt
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SanPham.TenSanPham)
+                </td>
+                <td class="text-end">
+                    @Html.FormatPrice(item.SanPham.GiaKhuyenMai)
+                </td>
+                <td class="text-end">
+                    @Html.DisplayFor(modelItem => item.SoLuong)
+                </td>
+                <td class="text-end fw-bold text-danger">
+                    @Html.FormatPrice(totalPrice)
+                </td>
+                <td class="text-center">
+
                     <div class="btn-group btn-group-sm column-gap-sm-1">
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Xóa">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                            <button type="button" class="btn btn-outline-danger" id="delete-btn" title="Xóa" onclick="confirmDelete(this,'@item.SanPham.TenSanPham')"><i class="fas fa-trash"></i></button>
+                        </form>
                     </div>
-                
-            </td>
-        </tr>
-}
+
+                </td>
+            </tr>
+
+            stt++;
+        }
     </tbody>
 </table>
+
+<div class="float-end border-top pt-3 mt-3 d-flex g-1">
+    <p>
+        <strong>Tổng tiền </strong>
+        <span id="selectedCount"></span>
+        <strong> sản phẩm đã chọn:</strong>
+        <span id="selectedTotal" class="text-danger fw-bold">@Html.FormatPrice(0)</span>
+    </p>
+    <div class="ms-2">
+        <form method="get" asp-action="Create" asp-controller="HoaDonBans" id="checkoutForm">
+            <input type="hidden" name="selectedCartItems" id="selectedCartItems" />
+
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="fas fa-credit-card"></i> Thanh toán
+            </button>
+
+        </form>
+    </div>
+</div>

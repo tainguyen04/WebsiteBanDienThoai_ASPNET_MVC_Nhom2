@@ -22,7 +22,7 @@ namespace QLCHBanDienThoaiMoi.Controllers
         // GET: GioHangs
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.GioHang.Include(g => g.KhachHang).Include(g => g.SanPham);
+            var applicationDbContext = _context.GioHang.Include(g => g.KhachHang).Include(g => g.SanPham).ThenInclude(g => g.KhuyenMai);
             
             return View(await applicationDbContext.ToListAsync());
         }
