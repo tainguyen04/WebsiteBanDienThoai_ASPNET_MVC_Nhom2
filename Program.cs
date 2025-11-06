@@ -10,6 +10,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<Program>()
+    .AddClasses(classes => classes.InNamespaces("QLCHBanDienThoaiMoi.Services"))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
