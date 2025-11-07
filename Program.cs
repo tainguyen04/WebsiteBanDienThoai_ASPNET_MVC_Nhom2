@@ -13,7 +13,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.Scan(scan => scan
     .FromAssemblyOf<Program>()
     .AddClasses(classes => classes.InNamespaces("QLCHBanDienThoaiMoi.Services"))
-    .AsImplementedInterfaces()
+    .AsSelf()
     .WithScopedLifetime());
 
 builder.Services.AddControllersWithViews();

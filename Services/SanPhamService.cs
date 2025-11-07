@@ -15,7 +15,7 @@ namespace QLCHBanDienThoaiMoi.Services
             _context = context;
         }
         //Load ds sản phẩm lên trang chủ
-        public async Task<List<Models.SanPham>> GetSanPhamsAsync()
+        public async Task<List<SanPham>> GetSanPhamsAsync()
         {
             var sanPhams = await _context.SanPham
                                         .Include(s => s.DanhMucSanPham)
