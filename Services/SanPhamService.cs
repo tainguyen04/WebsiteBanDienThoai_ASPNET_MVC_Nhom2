@@ -14,21 +14,35 @@ namespace QLCHBanDienThoaiMoi.Services
         {
             _context = context;
         }
-        //Load ds sản phẩm lên trang chủ
+        // Updated method to fix CS8602: Dereference of a possibly null reference.
         public async Task<List<SanPham>> GetSanPhamsAsync()
         {
             var sanPhams = await _context.SanPham
-                                        .Select(s => new SanPham 
-                                        { 
-                                            Id = s.Id,
-                                            TenSanPham = s.TenSanPham,
-                                            GiaBan = s.GiaBan,
-                                            HinhAnh = s.HinhAnh,
-                                            
-                                        })
-                                        .AsNoTracking()
-                                        .ToListAsync();
+                                         .Include(s => s.DanhMucSanPham)
+                                         .Include(s => s.KhuyenMai)
+                                         .AsNoTracking()
+                                         .ToListAsync();
             return sanPhams;
+        }
+        public async Task<List<SanPhamDTO>> GetSanPhamHomePageAsync()
+        {
+            var sp = await _context.SanPham
+                                       .Include(s => s.KhuyenMai)
+                                       .AsNoTracking()
+                                       .ToListAsync();
+            return  sp.Select( s=> new SanPhamDTO
+                                 {
+                                     Id = s.Id,
+                                     TenSanPham = s.TenSanPham,
+                                     GiaBan = s.GiaBan,
+                                     SoLuongTon = s.SoLuongTon,
+                                     HangSanXuat = s.HangSanXuat,
+                                     MoTa = s.MoTa,
+                                     HinhAnh = s.HinhAnh,
+                                     TenKhuyenMai = s.KhuyenMai != null ? s.KhuyenMai.TenKhuyenMai : string.Empty,
+                                     GiaKhuyenMai = s.KhuyenMai != null ? (decimal) s.GiaBan * (1 - s.KhuyenMai.GiaTri/100) : s.GiaBan,
+                                     PhanTramKhuyenMai = s.KhuyenMai != null ? s.KhuyenMai.GiaTri : 0
+                                 }).ToList();
         }
         //Tạo mới sản phẩm
         public async Task<bool> CreateSanPhamAsync(IFormFile file, SanPham sanPham)

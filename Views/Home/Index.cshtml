@@ -1,5 +1,4 @@
-@model IEnumerable<QLCHBanDienThoaiMoi.Models.SanPham>
-
+@model IEnumerable<QLCHBanDienThoaiMoi.DTO.SanPhamDTO>
 @{
     ViewData["Title"] = "Index";
 }
@@ -52,12 +51,12 @@
                         style="text-decoration:none; color:black; white-space: normal; word-wrap: break-word;">
                             @item.TenSanPham
                         </a>
-                        @if ((item.KhuyenMai?.GiaTri ?? 0) > 0)
+                        @if ((item.PhanTramKhuyenMai) > 0)
                         {
                             <h6 class="text-danger mb-0 fst-italic">@Html.FormatPrice(item.GiaKhuyenMai)</h6>
                             <div>
                                 <span class="text-muted text-decoration-line-through fs-5">@Html.FormatPrice(item.GiaBan)</span>
-                                <span class="text-danger fst-italic fw-bold">-@item.KhuyenMai.GiaTri%</span>
+                                <span class="text-danger fst-italic fw-bold">-@item.PhanTramKhuyenMai%</span>
                             </div>
                             
                         }
@@ -82,27 +81,4 @@
             </div>
         }
     </div>
-    <nav aria-label="Page navigation example" style="padding-top:25px;">
-        <ul class="pagination justify-content-center">
-            <!-- Nút Previous -->
-            <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="@(ViewBag.CurrentPage == 1 ? "#" : Url.Action("Index", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize }))"
-                @(ViewBag.CurrentPage == 1 ? "tabindex=\"-1\" aria-disabled=\"true\"" : "")>Trang trước</a>
-            </li>
-
-            <!-- Các trang số -->
-            @for (int i = 1; i <= ViewBag.TotalPages; i++)
-            {
-                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = ViewBag.PageSize })">@i</a>
-                </li>
-            }
-
-            <!-- Nút Next -->
-            <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                <a class="page-link" href="@(ViewBag.CurrentPage == ViewBag.TotalPages ? "#" : Url.Action("Index", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize }))">Trang sau</a>
-            </li>
-        </ul>
-    </nav>
-
 </div>

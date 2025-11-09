@@ -14,15 +14,33 @@ namespace QLCHBanDienThoaiMoi.Controllers
     public class HomeController : Controller
     {
         private readonly SanPhamService _sanPhamService;
-        public HomeController(SanPhamService sanPhamService)
+        private readonly GioHangService _gioHangService;
+        public HomeController(SanPhamService sanPhamService, GioHangService gioHangService)
         {
             _sanPhamService = sanPhamService;
+            _gioHangService = gioHangService;
         }
-
+        public string EnsureSessionIdExists()
+        {
+            var sesionId = HttpContext.Session.GetString("CartSessionId")?.Trim();
+            if (string.IsNullOrEmpty(sesionId))
+            {
+                sesionId = Guid.NewGuid().ToString();
+                HttpContext.Session.SetString("CartSessionId", sesionId);
+            }
+            return sesionId;
+        }
+        public int? GetKhachHangId()
+        {
+            return HttpContext.Session.GetInt32("KhachHangId");
+        }
         // GET: Home
         public async Task<IActionResult> Index()
         {
-            var sanPhams = await _sanPhamService.GetSanPhamsAsync();
+            var sanPhams = await _sanPhamService.GetSanPhamHomePageAsync();
+            string sessionId = EnsureSessionIdExists();
+            int? khachHangId = GetKhachHangId();
+            await _gioHangService.CreateGioHangAsync(sessionId, khachHangId);
             return View(sanPhams);
         }
 

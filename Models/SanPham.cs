@@ -19,7 +19,7 @@ namespace QLCHBanDienThoaiMoi.Models
         public string MoTa { get; set; } = null!;
         public string? HinhAnh { get; set; }
         [NotMapped]
-        public decimal GiaKhuyenMai
+        public int GiaKhuyenMai
         {
             get
             {
@@ -27,7 +27,7 @@ namespace QLCHBanDienThoaiMoi.Models
                 if (KhuyenMai == null || KhuyenMai.GiaTri <= 0)
                     return GiaBan;
 
-                return GiaBan * (1 - (KhuyenMai.GiaTri / 100));  // 100m để chính xác decimal
+                return (int)(GiaBan * (1 - (KhuyenMai.GiaTri / 100)));  // 100m để chính xác decimal
             }
         }
 

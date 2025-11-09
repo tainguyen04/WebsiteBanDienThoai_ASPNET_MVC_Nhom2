@@ -15,7 +15,6 @@ namespace QLCHBanDienThoaiMoi.Services
         public async Task<GioHang?> GetGioHangAsync(string? sessionId, int? khachHangId)
         {
             var gh = _context.GioHang
-                            .AsNoTracking()
                             .Include(g => g.ChiTietGioHangs)
                                 .ThenInclude(ct => ct.SanPham);
             if(khachHangId.HasValue)
@@ -83,10 +82,13 @@ namespace QLCHBanDienThoaiMoi.Services
                 await _context.SaveChangesAsync();
             }
 
-            decimal giaHienTai = sanPham?.GiaKhuyenMai ?? Convert.ToDecimal(sanPham.GiaBan);
+            // Fix for the line causing CS0029, CS1003, and CS1525 errors
+            // Original line: int giaHienTai = sanPham.GiaKhuyenMai ? sanPham.GiaBan;
 
-            var existingChiTiet = gioHang.ChiTietGioHangs
-                                        .FirstOrDefault(ct => ct.SanPhamId == sanPhamId);
+            // Corrected line:
+            int giaHienTai = sanPham.GiaKhuyenMai > 0 ? sanPham.GiaKhuyenMai : sanPham.GiaBan;
+
+            var existingChiTiet = await _context.ChiTietGioHang.FindAsync(gioHang.Id, sanPhamId);
             if (existingChiTiet != null)
             {
                 existingChiTiet.SoLuong += soLuong;
@@ -95,6 +97,7 @@ namespace QLCHBanDienThoaiMoi.Services
             {
                 gioHang.ChiTietGioHangs.Add(new ChiTietGioHang
                 {
+                    GioHangId = gioHang.Id,
                     SanPhamId = sanPhamId,
                     SoLuong = soLuong,
                     DonGia = giaHienTai
@@ -110,13 +113,13 @@ namespace QLCHBanDienThoaiMoi.Services
                 return false;
             
             var chiTiet = gioHang.ChiTietGioHangs
-                                .FirstOrDefault(ct => ct.SanPhamId == sanPhamId);
+                                .FirstOrDefault(ct => ct.SanPhamId == sanPhamId && ct.GioHangId == gioHang.Id);
             if (chiTiet == null) 
                 return false;
-            
-            ////Xóa giỏ hàng ở UI
+
+            //Xóa giỏ hàng ở UI
             //gioHang.ChiTietGioHangs.Remove(chiTiet);
-            ////Xóa giỏ hàng ở DB
+            //Xóa giỏ hàng ở DB
             _context.ChiTietGioHang.Remove(chiTiet);
             return await _context.SaveChangesAsync() > 0;
 

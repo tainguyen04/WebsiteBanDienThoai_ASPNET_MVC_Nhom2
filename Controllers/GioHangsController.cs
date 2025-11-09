@@ -28,14 +28,9 @@ namespace QLCHBanDienThoaiMoi.Controllers
             }
             return sesionId;
         }
-        public int GetKhachHangId()
+        public int? GetKhachHangId()
         {
-            var khachHangId = HttpContext.Session.GetInt32("KhachHangId");
-            if (!khachHangId.HasValue)
-            {
-                throw new Exception("KhachHangId không tồn tại trong session");
-            }
-            return khachHangId.Value;
+            return HttpContext.Session.GetInt32("KhachHangId");
         }
         // GET: GioHangs
         public async Task<IActionResult> Index()
@@ -53,7 +48,8 @@ namespace QLCHBanDienThoaiMoi.Controllers
         public async Task<IActionResult> AddToCart(int sanPhamId, int soLuong)
         {
             string sessionId = EnsureSessionIdExists();
-            await _gioHangService.AddToCardAsync(sessionId, sanPhamId, null, soLuong);
+            int? khachHangId = GetKhachHangId();
+            await _gioHangService.AddToCardAsync(sessionId, sanPhamId, khachHangId, soLuong);
             TempData["ThongBao"] = "Đã thêm vào giỏ hàng";
             return Redirect(Request.Headers["Referer"].ToString());
         }
@@ -64,10 +60,10 @@ namespace QLCHBanDienThoaiMoi.Controllers
         // POST: GioHangs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string sessionId,int khachHangId,int sanPhamId)
+        public async Task<IActionResult> DeleteConfirmed(int sanPhamId)
         {
-            sessionId = EnsureSessionIdExists();
-            khachHangId = GetKhachHangId();
+            string? sessionId = EnsureSessionIdExists();
+            int? khachHangId = GetKhachHangId();
             var gioHang = await _gioHangService.DeletedSanPhamAsync(sessionId,khachHangId,sanPhamId);
             return RedirectToAction(nameof(Index));
         }

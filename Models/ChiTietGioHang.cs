@@ -10,9 +10,9 @@ namespace QLCHBanDienThoaiMoi.Models
         public int SanPhamId { get; set; }
         public SanPham SanPham { get; set; } = null!;
         public int SoLuong { get; set; }
-        public decimal DonGia { get; set; }
+        public int DonGia { get; set; }
         [NotMapped]
-        public decimal TongTien => SoLuong * DonGia;
+        public int TongTien => SoLuong * DonGia;
 
     }
 }

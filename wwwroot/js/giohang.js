@@ -1,10 +1,15 @@
-﻿// Hiển thị thông báo từ TempData
+﻿
+
+// Hiển thị thông báo từ TempData
 if (typeof ThongBao !== 'undefined' && ThongBao) {
     Swal.fire({
+        toast: true,
         icon: 'success',
-        title: 'Thành công',
-        text: ThongBao,
-        confirmButtonText: 'OK',
+        position: "top-end",
+        title: ThongBao,
+        timerProcessBar: true,
+        showConfirmButton: false,
+        background: "#d4edda",
         timer: 3000
     });
 }

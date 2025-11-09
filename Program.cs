@@ -1,5 +1,6 @@
-
+﻿
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Services;
 
@@ -19,7 +20,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<SanPhamService>();
 builder.Services.AddScoped<GioHangService>();
 builder.Services.AddControllersWithViews();
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromDays(3); // 3 ngày
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
