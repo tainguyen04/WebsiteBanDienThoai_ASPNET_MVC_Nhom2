@@ -13,8 +13,7 @@ namespace QLCHBanDienThoaiMoi.Models
         public TrangThaiBaoHanh TrangThai { get; set; } = TrangThaiBaoHanh.DangBaoHanh;
 
         public ChiTietHoaDonBan ChiTietHoaDonBan { get; set; } = null!;
-        public HoaDonBan HoaDonBan { get; set; } = null!;
-        public SanPham SanPham { get; set; } = null!;
+       
 
     }
     public enum TrangThaiBaoHanh
