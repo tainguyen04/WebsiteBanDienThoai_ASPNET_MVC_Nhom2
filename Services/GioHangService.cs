@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
+using QLCHBanDienThoaiMoi.DTO;
 using QLCHBanDienThoaiMoi.Models;
 
 namespace QLCHBanDienThoaiMoi.Services
@@ -11,21 +12,54 @@ namespace QLCHBanDienThoaiMoi.Services
         {
             _context = context;
         }
-        // Lấy giỏ hàng theo sessionId hoặc khachHangId
-        public async Task<GioHang?> GetGioHangAsync(string? sessionId, int? khachHangId)
+        public async Task<GioHang?> GetGioHangEntityAsync(string? sessionId, int? khachHangId)
         {
-            var gh = _context.GioHang
-                            .Include(g => g.ChiTietGioHangs)
-                                .ThenInclude(ct => ct.SanPham);
-            if(khachHangId.HasValue)
+            var query = _context.GioHang.AsQueryable();
+            if (khachHangId.HasValue)
             {
-                return await gh.FirstOrDefaultAsync(g => g.KhachHangId == khachHangId);
+                query = query.Where(g => g.KhachHangId == khachHangId.Value);
             }
-            if(!string.IsNullOrEmpty(sessionId))
+            else if (!string.IsNullOrEmpty(sessionId))
             {
-                return await gh.FirstOrDefaultAsync(g => g.SessionId == sessionId);
+                query = query.Where(g => g.SessionId == sessionId);
             }
-            return null;
+            else
+            {
+                return null;
+            }
+            return await query.FirstOrDefaultAsync();
+        }
+        // Lấy danh sách giỏ hàng theo sessionId hoặc khachHangId
+        public async Task<List<ChiTietGioHangDTO>> GetGioHangAsync(string? sessionId, int? khachHangId)
+        {
+            var gh = _context.ChiTietGioHang.AsQueryable();
+
+            if (khachHangId.HasValue)
+            {
+                gh = gh.Where(g => g.GioHang.KhachHangId == khachHangId.Value);
+            }
+            else if(!string.IsNullOrEmpty(sessionId))
+            {
+                gh = gh.Where(g => g.GioHang.SessionId == sessionId);
+            }
+            else
+                return new List<ChiTietGioHangDTO>();
+
+
+            return await gh.Select(gh => new ChiTietGioHangDTO
+                {
+                    SessionId = gh.GioHang.SessionId,
+                    KhachHangId = gh.GioHang.KhachHangId,
+                    SanPhamId = gh.SanPhamId,
+                    HinhAnh = gh.SanPham.HinhAnh,
+                    TenSanPham = gh.SanPham.TenSanPham,
+                    SoLuong = gh.SoLuong,
+                    GiaBan = gh.SanPham.GiaBan,
+                    GiaKhuyenMai = gh.SanPham.KhuyenMai != null && gh.SanPham.KhuyenMai.GiaTri > 0
+                                            ? gh.SanPham.GiaBan * (1 - gh.SanPham.KhuyenMai.GiaTri / 100m)
+                                            : gh.SanPham.GiaBan
+            }).ToListAsync();
+
         }
         // Tạo giỏ hàng mới
         public async Task<bool> CreateGioHangAsync(string? sessionId, int? khachHangId)
@@ -34,7 +68,7 @@ namespace QLCHBanDienThoaiMoi.Services
             {
                 throw new ArgumentException("Phải có sessionId hoặc khachhangId");
             }
-            var existingGioHang = await GetGioHangAsync(sessionId, khachHangId);
+            var existingGioHang = await GetGioHangEntityAsync(sessionId, khachHangId);
             if (existingGioHang != null)
             {
                 return false;
@@ -108,13 +142,13 @@ namespace QLCHBanDienThoaiMoi.Services
         // Xóa sản phẩm khỏi giỏ hàng
         public async Task<bool> DeletedSanPhamAsync(string? sessionId,int? khachHangId,int sanPhamId)
         {
-            var gioHang = await GetGioHangAsync(sessionId, khachHangId);
-            if(gioHang == null)
-                return false;
-            
-            var chiTiet = gioHang.ChiTietGioHangs
-                                .FirstOrDefault(ct => ct.SanPhamId == sanPhamId && ct.GioHangId == gioHang.Id);
-            if (chiTiet == null) 
+            var chiTiet = await _context.ChiTietGioHang
+                                        .Include(ct => ct.GioHang)
+                                        .FirstOrDefaultAsync(ct =>
+                                            ct.SanPhamId == sanPhamId &&
+                                            (ct.GioHang.KhachHangId == khachHangId 
+                                            || ct.GioHang.SessionId == sessionId));
+            if (chiTiet == null)
                 return false;
 
             //Xóa giỏ hàng ở UI
@@ -125,26 +159,23 @@ namespace QLCHBanDienThoaiMoi.Services
 
         }
         // Merge giỏ hàng khi khách hàng đăng nhập
-        public async Task MergeCartAsync(string? sessionId,int? khachHangId)
+        public async Task<bool> MergeCartAsync(string? sessionId,int? khachHangId)
         {
-            var sessionCart = await GetGioHangAsync(sessionId, null);
-            var khachHangCart = await GetGioHangAsync(null,khachHangId);
+            var sessionCart =  await GetGioHangEntityAsync(sessionId, null);
+            var khachHangCart =  await GetGioHangEntityAsync(null, khachHangId);
 
-            if(sessionCart == null || khachHangCart == null) return;
-            
-            foreach(var item in sessionCart.ChiTietGioHangs)
-            {
-                var existing = khachHangCart.ChiTietGioHangs
-                                                .FirstOrDefault(ct => ct.SanPhamId == item.SanPhamId);
-                if (existing != null)
-                    existing.SoLuong += item.SoLuong;
-                else
-                    khachHangCart.ChiTietGioHangs.Add(item);
-            }
+            if (sessionCart == null || khachHangCart == null) return false;
+           
+
+            var mergeCart = await _context.ChiTietGioHang
+                                          .Where(ct => ct.GioHangId == sessionCart.Id)
+                                          .ExecuteUpdateAsync(ct => ct
+                                              .SetProperty(c => c.GioHangId, khachHangCart.Id));
 
             _context.GioHang.Remove(sessionCart);
             
             await _context.SaveChangesAsync();
+            return mergeCart > 0;
         }
     }
 }

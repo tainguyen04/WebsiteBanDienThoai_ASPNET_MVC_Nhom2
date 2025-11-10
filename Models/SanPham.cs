@@ -27,7 +27,7 @@ namespace QLCHBanDienThoaiMoi.Models
                 if (KhuyenMai == null || KhuyenMai.GiaTri <= 0)
                     return GiaBan;
 
-                return (int)(GiaBan * (1 - (KhuyenMai.GiaTri / 100)));  // 100m để chính xác decimal
+                return (int)(GiaBan * (1 - (KhuyenMai.GiaTri / 100m)));  // 100m để chính xác decimal
             }
         }
 
