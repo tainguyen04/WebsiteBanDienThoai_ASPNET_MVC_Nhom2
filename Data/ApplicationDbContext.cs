@@ -56,11 +56,7 @@ public class ApplicationDbContext : DbContext
             .HasOne(ct => ct.SanPham)
             .WithMany(s => s.ChiTietHoaDonBans)
             .HasForeignKey(ct => ct.SanPhamId);
-        modelBuilder.Entity<ChiTietHoaDonBan>()
-            .HasOne(ct => ct.PhieuBaoHanh)
-            .WithOne(p => p.ChiTietHoaDonBan) // Mối quan hệ 1-1
-            .HasForeignKey<PhieuBaoHanh>(p => new { p.HoaDonBanId, p.SanPhamId })
-            .IsRequired(false); // Nullable
+       
         // ChiTietGioHang
         modelBuilder.Entity<ChiTietGioHang>()
             .HasKey(ct => new { ct.GioHangId, ct.SanPhamId });
@@ -101,7 +97,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<HoaDonNhap>()
             .HasOne(h => h.NhaCungCap)
             .WithMany()
-            .HasForeignKey(h => h.NCCId);
+            .HasForeignKey(h => h.NhaCungCapId);
         modelBuilder.Entity<HoaDonNhap>()
             .HasMany(h => h.ChiTietHoaDonNhaps)
             .WithOne(ct => ct.HoaDonNhap)
@@ -127,10 +123,7 @@ public class ApplicationDbContext : DbContext
         // KhachHang
         modelBuilder.Entity<KhachHang>()
             .HasKey(k => k.Id);
-        modelBuilder.Entity<KhachHang>()
-            .HasOne(k => k.TaiKhoan)
-            .WithOne() // 1-1 với KhachHang
-            .HasForeignKey<KhachHang>(k => k.Id);
+       
 
         // NhaCungCap
         modelBuilder.Entity<NhaCungCap>()
@@ -138,28 +131,22 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<NhaCungCap>()
             .HasMany(n => n.HoaDonNhaps)
             .WithOne(h => h.NhaCungCap)
-            .HasForeignKey(h => h.NCCId);
+            .HasForeignKey(h => h.NhaCungCapId);
 
         // NhanVien
         modelBuilder.Entity<NhanVien>()
             .HasKey(n => n.Id);
-        modelBuilder.Entity<NhanVien>()
-            .HasOne(n => n.TaiKhoan)
-            .WithOne() // 1-1 với NhanVien
-            .HasForeignKey<NhanVien>(n => n.Id);
-        modelBuilder.Entity<NhanVien>()
-            .HasMany(n => n.HoaDonBans)
-            .WithOne(h => h.NhanVien)
-            .HasForeignKey(h => h.NhanVienId);
+        
 
         // PhieuBaoHanh
         modelBuilder.Entity<PhieuBaoHanh>()
-            .HasKey(p => p.Id);
+            .HasKey(p => new {p.HoaDonBanId,p.SanPhamId});
         modelBuilder.Entity<PhieuBaoHanh>()
-        .HasOne(p => p.ChiTietHoaDonBan)
-        .WithOne(ct => ct.PhieuBaoHanh)
-        .HasForeignKey<PhieuBaoHanh>(p => new { p.HoaDonBanId, p.SanPhamId })
-        .IsRequired(false);
+            .HasOne(p => p.ChiTietHoaDonBan)
+            .WithOne(ct => ct.PhieuBaoHanh)
+            .HasForeignKey<PhieuBaoHanh>(p => new { p.HoaDonBanId, p.SanPhamId })
+            .IsRequired(true)
+            .OnDelete(DeleteBehavior.NoAction);
 
         // SanPham
         modelBuilder.Entity<SanPham>()

@@ -3,22 +3,24 @@
     ViewData["Title"] = "Index";
     int stt = 1;
 }
-<p class="fs-6">
+<h3 class="fs-4 fw-bold text-primary mb-4">
     <strong>Giỏ hàng của bạn</strong>
-</p>
+</h3>
 @if (Model.ChiTietGioHangs == null || !Model.ChiTietGioHangs.Any())
 {
-    <div class="alert alert-info text-center fs-6">
+    <div class="alert alert-info text-center fs-1">
         Giỏ hàng của bạn đang trống!
     </div>
 }
 else
 {
-    <table class="table">
-        <thead class="table-primary">
+    
+    <table class="table table-hover">
+        <thead class="table-primary p">
             <tr class="text-center">
                 <th class="text-start">
-                    <input type="checkbox" id="select-all" /> Chọn tất cả
+                    <input type="checkbox" id="select-all" />
+                    <div class="small">Chọn tất cả</div>
                 </th>
                 <th>
                     @Html.DisplayName("Hình ảnh")
@@ -102,5 +104,4 @@ else
             </form>
         </div>
     </div>
-
 }

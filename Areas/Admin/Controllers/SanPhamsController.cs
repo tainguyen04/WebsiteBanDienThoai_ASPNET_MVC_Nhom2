@@ -35,7 +35,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         // GET: SanPhams/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-           var sanPham = _sanPhamService.GetSanPhamByIdAsync(id);
+           var sanPham = await _sanPhamService.GetSanPhamByIdAsync(id);
             if (sanPham == null)
             {
                 return NotFound();
