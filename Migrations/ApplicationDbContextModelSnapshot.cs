@@ -313,8 +313,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
 
                     b.HasKey("HoaDonBanId", "SanPhamId");
 
-                    b.HasIndex("SanPhamId");
-
                     b.ToTable("PhieuBaoHanh");
                 });
 
@@ -504,18 +502,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
 
             modelBuilder.Entity("QLCHBanDienThoaiMoi.Models.PhieuBaoHanh", b =>
                 {
-                    b.HasOne("QLCHBanDienThoaiMoi.Models.HoaDonBan", "HoaDonBan")
-                        .WithMany()
-                        .HasForeignKey("HoaDonBanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("QLCHBanDienThoaiMoi.Models.SanPham", "SanPham")
-                        .WithMany()
-                        .HasForeignKey("SanPhamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("QLCHBanDienThoaiMoi.Models.ChiTietHoaDonBan", "ChiTietHoaDonBan")
                         .WithOne("PhieuBaoHanh")
                         .HasForeignKey("QLCHBanDienThoaiMoi.Models.PhieuBaoHanh", "HoaDonBanId", "SanPhamId")
@@ -523,10 +509,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
                         .IsRequired();
 
                     b.Navigation("ChiTietHoaDonBan");
-
-                    b.Navigation("HoaDonBan");
-
-                    b.Navigation("SanPham");
                 });
 
             modelBuilder.Entity("QLCHBanDienThoaiMoi.Models.SanPham", b =>

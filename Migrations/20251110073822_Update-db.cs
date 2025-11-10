@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace QLCHBanDienThoaiMoi.Migrations
 {
     /// <inheritdoc />
-    public partial class CapNhatDataBase : Migration
+    public partial class Updatedb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -114,14 +114,15 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NgayLap = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NCCId = table.Column<int>(type: "int", nullable: false)
+                    NhaCungCapId = table.Column<int>(type: "int", nullable: false),
+                    TongTien = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HoaDonNhap", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HoaDonNhap_NhaCungCap_NCCId",
-                        column: x => x.NCCId,
+                        name: "FK_HoaDonNhap_NhaCungCap_NhaCungCapId",
+                        column: x => x.NhaCungCapId,
                         principalTable: "NhaCungCap",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -198,9 +199,8 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     KhachHangId = table.Column<int>(type: "int", nullable: true),
-                    SanPhamId = table.Column<int>(type: "int", nullable: false),
                     SessionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SoLuong = table.Column<int>(type: "int", nullable: false)
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -210,12 +210,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
                         column: x => x.KhachHangId,
                         principalTable: "KhachHang",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GioHang_SanPham_SanPhamId",
-                        column: x => x.SanPhamId,
-                        principalTable: "SanPham",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -227,6 +221,7 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     NgayBan = table.Column<DateTime>(type: "datetime2", nullable: false),
                     KhachHangId = table.Column<int>(type: "int", nullable: true),
                     NhanVienId = table.Column<int>(type: "int", nullable: true),
+                    TongTien = table.Column<int>(type: "int", nullable: false),
                     PhuongThucThanhToan = table.Column<int>(type: "int", nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false)
                 },
@@ -246,13 +241,42 @@ namespace QLCHBanDienThoaiMoi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ChiTietGioHang",
+                columns: table => new
+                {
+                    GioHangId = table.Column<int>(type: "int", nullable: false),
+                    SanPhamId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    SoLuong = table.Column<int>(type: "int", nullable: false),
+                    DonGia = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChiTietGioHang", x => new { x.GioHangId, x.SanPhamId });
+                    table.ForeignKey(
+                        name: "FK_ChiTietGioHang_GioHang_GioHangId",
+                        column: x => x.GioHangId,
+                        principalTable: "GioHang",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChiTietGioHang_SanPham_SanPhamId",
+                        column: x => x.SanPhamId,
+                        principalTable: "SanPham",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ChiTietHoaDonBan",
                 columns: table => new
                 {
                     HoaDonBanId = table.Column<int>(type: "int", nullable: false),
                     SanPhamId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false),
-                    GiaBan = table.Column<int>(type: "int", nullable: false)
+                    GiaBan = table.Column<int>(type: "int", nullable: false),
+                    KhuyenMai = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -275,8 +299,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
                 name: "PhieuBaoHanh",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     HoaDonBanId = table.Column<int>(type: "int", nullable: false),
                     SanPhamId = table.Column<int>(type: "int", nullable: false),
                     NgayLap = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -286,13 +308,18 @@ namespace QLCHBanDienThoaiMoi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PhieuBaoHanh", x => x.Id);
+                    table.PrimaryKey("PK_PhieuBaoHanh", x => new { x.HoaDonBanId, x.SanPhamId });
                     table.ForeignKey(
                         name: "FK_PhieuBaoHanh_ChiTietHoaDonBan_HoaDonBanId_SanPhamId",
                         columns: x => new { x.HoaDonBanId, x.SanPhamId },
                         principalTable: "ChiTietHoaDonBan",
                         principalColumns: new[] { "HoaDonBanId", "SanPhamId" });
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChiTietGioHang_SanPhamId",
+                table: "ChiTietGioHang",
+                column: "SanPhamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChiTietHoaDonBan_SanPhamId",
@@ -310,11 +337,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
                 column: "KhachHangId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GioHang_SanPhamId",
-                table: "GioHang",
-                column: "SanPhamId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HoaDonBan_KhachHangId",
                 table: "HoaDonBan",
                 column: "KhachHangId");
@@ -325,15 +347,9 @@ namespace QLCHBanDienThoaiMoi.Migrations
                 column: "NhanVienId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HoaDonNhap_NCCId",
+                name: "IX_HoaDonNhap_NhaCungCapId",
                 table: "HoaDonNhap",
-                column: "NCCId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PhieuBaoHanh_HoaDonBanId_SanPhamId",
-                table: "PhieuBaoHanh",
-                columns: new[] { "HoaDonBanId", "SanPhamId" },
-                unique: true);
+                column: "NhaCungCapId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SanPham_DanhMucId",
@@ -350,13 +366,16 @@ namespace QLCHBanDienThoaiMoi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ChiTietGioHang");
+
+            migrationBuilder.DropTable(
                 name: "ChiTietHoaDonNhap");
 
             migrationBuilder.DropTable(
-                name: "GioHang");
+                name: "PhieuBaoHanh");
 
             migrationBuilder.DropTable(
-                name: "PhieuBaoHanh");
+                name: "GioHang");
 
             migrationBuilder.DropTable(
                 name: "HoaDonNhap");
