@@ -29,10 +29,14 @@ namespace QLCHBanDienThoaiMoi.Services
             }
             return await query.FirstOrDefaultAsync();
         }
-        // Lấy danh sách giỏ hàng theo sessionId hoặc khachHangId
+        // Lấy chi tiết giỏ hàng theo sessionId hoặc khachHangId
         public async Task<List<ChiTietGioHangDTO>> GetGioHangAsync(string? sessionId, int? khachHangId)
         {
-            var gh = _context.ChiTietGioHang.AsQueryable();
+            var gh = _context.ChiTietGioHang
+                            .Include(g => g.GioHang)
+                            .Include(g => g.SanPham)
+                                .ThenInclude(g => g.KhuyenMai)
+                            .AsQueryable();
 
             if (khachHangId.HasValue)
             {
@@ -43,8 +47,9 @@ namespace QLCHBanDienThoaiMoi.Services
                 gh = gh.Where(g => g.GioHang.SessionId == sessionId);
             }
             else
+            {
                 return new List<ChiTietGioHangDTO>();
-
+            }
 
             return await gh.Select(gh => new ChiTietGioHangDTO
                 {
@@ -56,7 +61,7 @@ namespace QLCHBanDienThoaiMoi.Services
                     SoLuong = gh.SoLuong,
                     GiaBan = gh.SanPham.GiaBan,
                     GiaKhuyenMai = gh.SanPham.KhuyenMai != null && gh.SanPham.KhuyenMai.GiaTri > 0
-                                            ? gh.SanPham.GiaBan * (1 - gh.SanPham.KhuyenMai.GiaTri / 100m)
+                                            ? gh.SanPham.GiaBan * (1 - gh.SanPham.KhuyenMai.GiaTri / 100)
                                             : gh.SanPham.GiaBan
             }).ToListAsync();
 
@@ -140,19 +145,26 @@ namespace QLCHBanDienThoaiMoi.Services
             return await _context.SaveChangesAsync() > 0;
         }
         // Xóa sản phẩm khỏi giỏ hàng
-        public async Task<bool> DeletedSanPhamAsync(string? sessionId,int? khachHangId,int sanPhamId)
+        public async Task<bool> DeletedSanPhamFromGioHangAsync(string? sessionId,int? khachHangId,int sanPhamId)
         {
-            var chiTiet = await _context.ChiTietGioHang
-                                        .Include(ct => ct.GioHang)
-                                        .FirstOrDefaultAsync(ct =>
-                                            ct.SanPhamId == sanPhamId &&
-                                            (ct.GioHang.KhachHangId == khachHangId 
-                                            || ct.GioHang.SessionId == sessionId));
+            var query =  _context.ChiTietGioHang.Include(ct => ct.GioHang).AsQueryable();
+            if(!string.IsNullOrEmpty(sessionId))
+            {
+                query = query.Where(ct => ct.GioHang.SessionId == sessionId);
+            }
+            else if(khachHangId.HasValue)
+            {
+                query = query.Where(ct => ct.GioHang.KhachHangId == khachHangId.Value);
+            }
+            else
+            {
+                return false;
+            }
+            var chiTiet = await query.FirstOrDefaultAsync(ct => ct.SanPhamId == sanPhamId);
             if (chiTiet == null)
                 return false;
 
-            //Xóa giỏ hàng ở UI
-            //gioHang.ChiTietGioHangs.Remove(chiTiet);
+            
             //Xóa giỏ hàng ở DB
             _context.ChiTietGioHang.Remove(chiTiet);
             return await _context.SaveChangesAsync() > 0;

@@ -4,48 +4,88 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Cột trái: thông tin hóa đơn -->
+        <div class="col-md-6 border-end">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="text-primary mb-3">Thông tin hóa đơn</h5>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Ngày bán:</dt>
+                        <dd class="col-sm-7">@Model.NgayBan.ToString("dd/MM/yyyy HH:mm")</dd>
 
-<h4>HoaDonBan</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NgayBan" class="control-label"></label>
-                <input asp-for="NgayBan" class="form-control" />
-                <span asp-validation-for="NgayBan" class="text-danger"></span>
+                        <dt class="col-sm-5">Khách hàng:</dt>
+                        <dd class="col-sm-7">@((Model.KhachHang?.TenKhachHang) ?? "Khách lẻ")</dd>
+
+                        <dt class="col-sm-5">Số điện thoại:</dt>
+                        <dd class="col-sm-7">@((Model.KhachHang?.SoDienThoai))</dd>
+
+                        <dt class="col-sm-5">Địa chỉ nhận hàng:</dt>
+                        <dd class="col-sm-7">
+                            @((!string.IsNullOrEmpty(Model.DiaChiNhanHang)
+                                ? Model.DiaChiNhanHang
+                                : Model.KhachHang?.DiaChi))
+                        </dd>
+
+                        <dt class="col-sm-5">Phương thức thanh toán:</dt>
+                        <dd class="col-sm-7">
+                            <select class="form-select form-select-sm"
+                                    asp-for="PhuongThucThanhToan"
+                                    asp-items="Html.GetEnumSelectList<PhuongThucThanhToan>()">
+                            </select>
+                            <span asp-validation-for="PhuongThucThanhToan" class="text-danger"></span>
+                        </dd>
+
+                        <dt class="col-sm-5">Trạng thái thanh toán:</dt>
+                        <dd class="col-sm-7">
+                            @Html.Raw(EnumExtensions.GetBadgeHtml(Model.TrangThai))
+                        </dd>
+                    </dl>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="KhachHangId" class="control-label"></label>
-                <select asp-for="KhachHangId" class ="form-control" asp-items="ViewBag.KhachHangId"></select>
+        </div>
+
+        <!-- Cột phải: chi tiết sản phẩm -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="text-primary mb-3">Sản phẩm trong đơn hàng</h5>
+                    @foreach (var ct in Model.ChiTietHoaDonBans)
+                    {
+                        <div class="d-flex align-items-center border-bottom py-3">
+                            <img src="~/images/@ct.SanPham?.HinhAnh"
+                                 alt="@ct.SanPham?.TenSanPham"
+                                 style="width:60px; height:60px; object-fit:cover;" />
+
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">@ct.SanPham?.TenSanPham</h6>
+                                <p class="mb-1 text-muted">Số lượng: @ct.SoLuong</p>
+                                <p class="mb-0 text-muted">Giá bán: @Html.FormatPrice(ct.GiaBan)</p>
+                            </div>
+                            <div class="text-end">
+                                <strong class="text-danger">Thành tiền: @Html.FormatPrice(ct.ThanhTien)</strong>
+                            </div>
+                        </div>
+                    }
+                    <div class="text-end mt-3 border-top pt-2">
+                        <strong>Tổng tiền: </strong>
+                        <span class="text-danger fw-bold">@Html.FormatPrice(Model.ChiTietHoaDonBans.Sum(ct => ct.ThanhTien))</span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="NhanVienId" class="control-label"></label>
-                <select asp-for="NhanVienId" class ="form-control" asp-items="ViewBag.NhanVienId"></select>
+            <br />
+            <div class="d-flex justify-content-end mt-4">
+                @if (Model.TrangThai == TrangThaiHoaDon.ChuaHoanThanh)
+                {
+                    <form asp-action="Create" asp-controller="HoaDonBans" method="post">
+                        <input type="hidden" name="selectedCartItems" value="@ViewBag.SelectedCartItems" />
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Xác nhận thanh toán
+                        </button>
+                    </form>
+                }
             </div>
-            <div class="form-group">
-                <label asp-for="PhuongThucThanhToan" class="control-label"></label>
-                <select asp-for="PhuongThucThanhToan" class="form-control"></select>
-                <span asp-validation-for="PhuongThucThanhToan" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrangThai" class="control-label"></label>
-                <select asp-for="TrangThai" class="form-control"></select>
-                <span asp-validation-for="TrangThai" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

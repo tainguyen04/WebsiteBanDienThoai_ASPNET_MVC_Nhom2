@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QLCHBanDienThoaiMoi.Data;
 
@@ -11,9 +12,11 @@ using QLCHBanDienThoaiMoi.Data;
 namespace QLCHBanDienThoaiMoi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251113074234_Update-db-3")]
+    partial class Updatedb3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,6 +62,9 @@ namespace QLCHBanDienThoaiMoi.Migrations
 
                     b.Property<int>("Id")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("KhuyenMai")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SoLuong")
                         .HasColumnType("int");
@@ -139,10 +145,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DiaChiNhanHang")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("KhachHangId")
                         .HasColumnType("int");

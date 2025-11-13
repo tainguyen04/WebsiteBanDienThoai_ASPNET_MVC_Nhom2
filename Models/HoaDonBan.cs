@@ -12,6 +12,7 @@ namespace QLCHBanDienThoaiMoi.Models
         public KhachHang? KhachHang { get; set; } 
         public int? NhanVienId { get; set; }
         public NhanVien? NhanVien { get; set; } 
+        public string DiaChiNhanHang { get; set; } = null!;
         public int TongTien { get; set; }
         public PhuongThucThanhToan PhuongThucThanhToan { get; set; }
         public TrangThaiHoaDon TrangThai { get; set; } = TrangThaiHoaDon.ChuaHoanThanh;

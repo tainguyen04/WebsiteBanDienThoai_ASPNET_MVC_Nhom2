@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Humanizer;
+using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
 
@@ -30,26 +31,54 @@ namespace QLCHBanDienThoaiMoi.Services
         }
         public async Task<bool> CreateHoaDonBanAsync(HoaDonBan hoaDonBan,List<ChiTietHoaDonBan> chiTiet)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            if (hoaDonBan == null || chiTiet == null || !chiTiet.Any())
             {
-                hoaDonBan.TongTien = chiTiet.Sum(ct => (int)ct.ThanhTien);
-            }
-            catch (Exception)
-            {
-                await transaction.RollbackAsync();
                 return false;
             }
-            _context.HoaDonBan.Add(hoaDonBan);
-            var hd = await _context.SaveChangesAsync();
-            return hd > 0;
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            
+            try
+            {
+                hoaDonBan.TongTien = (int)chiTiet.Sum(ct => ct.SoLuong * ct.GiaBan);
+                _context.HoaDonBan.Add(hoaDonBan);
+                await _context.SaveChangesAsync();
+                foreach (var ct in chiTiet)
+                {
+                    ct.HoaDonBanId = hoaDonBan.Id;
+                    ct.HoaDonBan = null;
+                }
+                _context.ChiTietHoaDonBan.AddRange(chiTiet);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine($"Lỗi khi tạo hóa đơn: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("Chi tiết inner exception:");
+                    Console.WriteLine(ex.InnerException.Message);
+                }
+
+                Console.WriteLine(ex.StackTrace);
+                return false;
+            }
         }
         public async Task<bool> DeleteHoaDonBanAsync(int id)
         {
-            var hoaDonBan = await _context.HoaDonBan.FindAsync(id);
+            var hoaDonBan = await _context.HoaDonBan
+                                .Include(ct => ct.ChiTietHoaDonBans)
+                                .FirstOrDefaultAsync(hd => hd.Id == id);
+            
             if (hoaDonBan == null)
             {
                 return false;
+            }
+            if(hoaDonBan.ChiTietHoaDonBans.Any())
+            {
+                _context.ChiTietHoaDonBan.RemoveRange(hoaDonBan.ChiTietHoaDonBans);
             }
             _context.HoaDonBan.Remove(hoaDonBan);
             var result = await _context.SaveChangesAsync();

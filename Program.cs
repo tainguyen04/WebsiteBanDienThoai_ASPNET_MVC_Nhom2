@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using QLCHBanDienThoaiMoi.Data;
+using QLCHBanDienThoaiMoi.Helpers;
 using QLCHBanDienThoaiMoi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +18,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 //    .AddClasses(classes => classes.InNamespaces("QLCHBanDienThoaiMoi.Services"))
 //    .AsSelf()
 //    .WithScopedLifetime());
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<SessionHelper>();
 builder.Services.AddScoped<SanPhamService>();
 builder.Services.AddScoped<GioHangService>();
+builder.Services.AddScoped<HoaDonBanService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options =>
 {
