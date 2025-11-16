@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "Thống kê doanh thu";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Thống kê doanh thu</h2>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card bg-success text-white p-3">
+            <h4>Doanh thu hôm nay</h4>
+            <h3>@String.Format("{0:N0} VNĐ", ViewBag.DoanhThuHomNay)</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-primary text-white p-3">
+            <h4>Doanh thu tháng này</h4>
+            <h3>@String.Format("{0:N0} VNĐ", ViewBag.DoanhThuThangNay)</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white p-3">
+            <h4>Doanh thu năm nay</h4>
+            <h3>@String.Format("{0:N0} VNĐ", ViewBag.DoanhThuNamNay)</h3>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<canvas id="chartDoanhThu" width="800" height="400"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('chartDoanhThu').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Ngày', 'Tháng', 'Năm'],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: [
+        @ViewBag.DoanhThuHomNay,
+        @ViewBag.DoanhThuThangNay,
+        @ViewBag.DoanhThuNamNay
+                    ],
+                    backgroundColor: ['#28a745', '#007bff', '#ffc107']
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+}
