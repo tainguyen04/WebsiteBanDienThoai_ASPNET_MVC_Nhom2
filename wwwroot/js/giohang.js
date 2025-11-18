@@ -1,35 +1,5 @@
 ﻿
 
-// Hiển thị thông báo từ TempData
-if (typeof ThongBao !== 'undefined' && ThongBao) {
-    Swal.fire({
-        toast: true,
-        icon: 'success',
-        position: "top-end",
-        title: ThongBao,
-        timerProcessBar: true,
-        showConfirmButton: false,
-        background: "#d4edda",
-        timer: 3000
-    });
-}
-
-// Hàm xác nhận xóa
-function confirmDelete(button, entityName) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Bạn có chắc muốn xóa?',
-        html: 'Bạn có chắc muốn xóa "<b>' + entityName + '</b>" khỏi giỏ hàng không?',
-        showCancelButton: true,
-        confirmButtonText: 'Xóa',
-        cancelButtonText: 'Hủy'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            button.closest('form').submit();
-        }
-    });
-}
-
 // Tính tổng tiền
 function calculateTotal() {
     let total = 0;

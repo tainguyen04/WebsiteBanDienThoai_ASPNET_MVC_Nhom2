@@ -65,7 +65,8 @@ namespace QLCHBanDienThoaiMoi.Controllers
                     GiaBan = (int)cartItems.GiaKhuyenMai,
                 }).ToList()
             };
-            
+            // Gửi thêm danh sách id sản phẩm được chọn sang View
+            ViewBag.SelectedCartItems = string.Join(",", cartItemIds);
             return View(hoaDonBan);
         }
 

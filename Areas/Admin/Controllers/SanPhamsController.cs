@@ -62,8 +62,15 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _sanPhamService.CreateSanPhamAsync(file,sanPham);
-                if(result)
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Thêm sản phẩm thành công!";
                     return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Có lỗi xảy ra khi thêm sản phẩm.");
+                }      
                 
             }
             await LoadDropDownData(sanPham);
@@ -108,7 +115,12 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
                     {
                         return NotFound();
                     }
-                    RedirectToAction(nameof(Index));
+                    else
+                    {
+                        TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công!";
+                        RedirectToAction(nameof(Index));
+                    }
+                        
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -157,6 +169,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         {
             return _context.SanPham.Any(e => e.Id == id);
         }
+        // Load dữ liệu cho dropdown
         public async Task LoadDropDownData(SanPham? sanPham = null)
         {
             var khuyenMais = (await _sanPhamService.GetAllKhuyenMaiAsync())

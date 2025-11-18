@@ -24,10 +24,10 @@
                     </div>
                     <div class="col-auto">
                         <div class="dropdown">
-                            <button class="btn btn-outline-gold dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <button class="btn btn-outline-blue dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-2"></i>Admin User
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-dark">
+                            <ul class="dropdown-menu dropdown-menu-light">
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -168,7 +168,14 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <script src="~/js/function.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    @if (TempData["ThongBao"] != null)
+    {
+        <script>
+            var ThongBao = '@Html.Raw(TempData["SuccessMessage"])';
+        </script>
+    }
+    <script src="~/js/giohang.js" asp-append-version="true"></script>
 </body>
 </html>
