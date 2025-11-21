@@ -35,7 +35,6 @@ namespace QLCHBanDienThoaiMoi.Services
                                      Id = s.Id,
                                      TenSanPham = s.TenSanPham,
                                      GiaBan = s.GiaBan,
-                                     SoLuongTon = s.SoLuongTon,
                                      HangSanXuat = s.HangSanXuat,
                                      MoTa = s.MoTa,
                                      HinhAnh = s.HinhAnh,

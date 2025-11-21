@@ -12,8 +12,8 @@ using QLCHBanDienThoaiMoi.Data;
 namespace QLCHBanDienThoaiMoi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251113074745_Update-db-4")]
-    partial class Updatedb4
+    [Migration("20251121092411_them_table_tonKho")]
+    partial class them_table_tonKho
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,9 @@ namespace QLCHBanDienThoaiMoi.Migrations
 
                     b.Property<int>("Id")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("KhuyenMai")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SoLuong")
                         .HasColumnType("int");
@@ -142,6 +145,10 @@ namespace QLCHBanDienThoaiMoi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DiaChiNhanHang")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("KhachHangId")
                         .HasColumnType("int");
@@ -347,9 +354,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SoLuongTon")
-                        .HasColumnType("int");
-
                     b.Property<string>("TenSanPham")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -388,6 +392,28 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TaiKhoan");
+                });
+
+            modelBuilder.Entity("QLCHBanDienThoaiMoi.Models.TonKho", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("SanPhamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SoLuong")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SanPhamId")
+                        .IsUnique();
+
+                    b.ToTable("TonKho");
                 });
 
             modelBuilder.Entity("QLCHBanDienThoaiMoi.Models.ChiTietGioHang", b =>
@@ -529,6 +555,17 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     b.Navigation("KhuyenMai");
                 });
 
+            modelBuilder.Entity("QLCHBanDienThoaiMoi.Models.TonKho", b =>
+                {
+                    b.HasOne("QLCHBanDienThoaiMoi.Models.SanPham", "SanPham")
+                        .WithOne("TonKho")
+                        .HasForeignKey("QLCHBanDienThoaiMoi.Models.TonKho", "SanPhamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SanPham");
+                });
+
             modelBuilder.Entity("QLCHBanDienThoaiMoi.Models.ChiTietHoaDonBan", b =>
                 {
                     b.Navigation("PhieuBaoHanh");
@@ -583,6 +620,8 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     b.Navigation("ChiTietHoaDonBans");
 
                     b.Navigation("ChiTietHoaDonNhaps");
+
+                    b.Navigation("TonKho");
                 });
 
             modelBuilder.Entity("QLCHBanDienThoaiMoi.Models.TaiKhoan", b =>

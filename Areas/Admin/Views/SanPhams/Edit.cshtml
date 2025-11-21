@@ -44,10 +44,6 @@
                                     </div>
                                     <span asp-validation-for="GiaNhap" class="text-danger small"></span>
                                 </div>
-            <div class="form-group">
-                <label asp-for="SoLuongTon" class="control-label"></label>
-                <input asp-for="SoLuongTon" class="form-control" />
-                <span asp-validation-for="SoLuongTon" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -58,34 +54,14 @@
                                     </div>
                                     <span asp-validation-for="GiaBan" class="text-danger small"></span>
                                 </div>
-            <div class="form-group">
-                <label asp-for="MoTa" class="control-label"></label>
-                <input asp-for="MoTa" class="form-control" />
-                <span asp-validation-for="MoTa" class="text-danger"></span>
                             </div>
-            <div class="form-group">
-                <label asp-for="HinhAnh" class="control-label"></label>
-                <input type="file" name="file" asp-for="HinhAnh" class="form-control" />
-                <p>@Model.HinhAnh</p>
-                <input type="hidden" asp-for="HinhAnh" />
-                <span asp-validation-for="HinhAnh" class="text-danger"></span>
                         </div>
-
-                        <!-- Số lượng tồn -->
-                        <div class="mb-3">
-                            <label asp-for="SoLuongTon" class="form-label fw-bold text-dark">Số lượng tồn <span class="text-danger">*</span></label>
-                            <input asp-for="SoLuongTon" class="form-control" type="number" min="0" placeholder="0" required />
-                            <span asp-validation-for="SoLuongTon" class="text-danger small"></span>
-                        </div>
-
                         <!-- Hãng sản xuất -->
                         <div class="mb-3">
                             <label asp-for="HangSanXuat" class="form-label fw-bold text-dark">Hãng sản xuất <span class="text-danger">*</span></label>
                             <input asp-for="HangSanXuat" class="form-control" placeholder="Nhập hãng sản xuất" required />
                             <span asp-validation-for="HangSanXuat" class="text-danger small"></span>
                         </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
                     </div>
 
                     <!-- Cột phải -->

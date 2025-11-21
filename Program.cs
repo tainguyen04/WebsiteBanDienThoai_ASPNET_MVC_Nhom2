@@ -28,6 +28,7 @@ builder.Services.AddScoped<NhanVienService>();
 builder.Services.AddScoped<NhaCungCapService>();
 builder.Services.AddScoped<KhuyenMaiService>();
 builder.Services.AddScoped<DanhMucSanPhamService>();
+builder.Services.AddScoped<TonKhoService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options =>
 

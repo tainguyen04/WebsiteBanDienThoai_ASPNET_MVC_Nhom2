@@ -1,0 +1,68 @@
+﻿@model IEnumerable<QLCHBanDienThoaiMoi.Models.TonKho>
+
+@{
+    ViewData["Title"] = "Quản lý tồn kho";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary"><i class="fas fa-boxes me-2"></i>Quản lý tồn kho</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="admin-table">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Hình ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th width="100" class="text-center">Trạng thái</th>
+                            <th width="150" class="text-center">Số lượng tồn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.SanPham?.HinhAnh))
+                                    {
+                                        <img src="~/images/@item.SanPham.HinhAnh"
+                                             style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px; margin-right: 12px;"
+                                             alt="@item.SanPham.TenSanPham">
+                                    }
+                                </td>
+                                <td>
+                                    <div>
+                                        <div class="fw-bold">@item.SanPham?.TenSanPham</div>
+                                        <small class="text-muted">Mã: @item.SanPham?.Id</small>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.SoLuong > 10)
+                                    {
+                                        <span class="badge bg-success">Đủ hàng</span>
+                                    }
+                                    else if (item.SoLuong > 0)
+                                    {
+                                        <span class="badge bg-warning">Sắp hết</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Hết hàng</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge @(item.SoLuong > 10 ? "bg-success" : item.SoLuong > 0 ? "bg-warning" : "bg-danger") fs-6">
+                                        @item.SoLuong
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

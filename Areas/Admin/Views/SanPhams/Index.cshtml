@@ -19,7 +19,6 @@
                     <th width="100">Hình ảnh</th>
                     <th>Tên sản phẩm</th>
                     <th width="120">Giá bán</th>
-                    <th width="110">Tồn kho</th>
                     <th width="120">Danh mục</th>
                     <th width="120">Khuyến mãi</th>
                     <th width="150">Tùy chỉnh</th>
@@ -40,11 +39,6 @@
                         </td>
                         <td>
                             <div class="text-success fw-bold fst-italic text-end" style="width:max-content;">@Html.FormatPrice(item.GiaKhuyenMai)</div>
-                        </td>
-                        <td class="text-end">
-                            <span class="badge @(item.SoLuongTon > 0 ? "bg-success" : "bg-danger")">
-                                @item.SoLuongTon
-                            </span>
                         </td>
                         <td class="text-center">@item.DanhMucSanPham?.TenDanhMuc</td>
                         <td class="text-end">

@@ -102,7 +102,7 @@ public class HoaDonNhapService : IHoaDonNhapService
 
             // Cập nhật tồn kho
             var sp = _context.SanPham.Find(ct.SanPhamId);
-            if (sp != null) sp.SoLuongTon += ct.SoLuong;
+            //if (sp != null) sp.SoLuongTon += ct.SoLuong;
         }
 
         _context.SaveChanges();

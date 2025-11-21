@@ -59,7 +59,7 @@
                             </span>
                         }
                     }
-                    <div class="text-success">
+                    @* <div class="text-success">
                         @if (Model.SoLuongTon > 0)
                         {
                             <span class="badge bg-success">
@@ -72,11 +72,11 @@
                                 <i class="fas fa-times-circle"></i> Hết hàng
                             </span>
                         }
-                    </div>
+                    </div> *@
                 </div>
                 <!-- Nút hành động -->
                 <div class="d-grid gap-2 d-md-flex">
-                    @if (Model.SoLuongTon > 0)
+                   @*  @if (Model.SoLuongTon > 0)
                     {
                         <button class="btn btn-primary btn-lg flex-fill">
                             <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
@@ -90,7 +90,7 @@
                         <button class="btn btn-secondary btn-lg flex-fill" disabled>
                             <i class="fas fa-bell"></i> Thông báo khi có hàng
                         </button>
-                    }
+                    } *@
                 </div>
             </div>
         </div>

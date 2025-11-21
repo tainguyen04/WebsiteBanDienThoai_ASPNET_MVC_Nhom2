@@ -9,7 +9,6 @@ namespace QLCHBanDienThoaiMoi.Models
         public string TenSanPham { get; set; } = null!;
         public int GiaNhap { get; set; }
         public int GiaBan { get; set; }
-        public int SoLuongTon { get; set; }
         public int DanhMucId { get; set; }
         public int? KhuyenMaiId { get; set; }
         
@@ -33,6 +32,7 @@ namespace QLCHBanDienThoaiMoi.Models
 
         public DanhMucSanPham? DanhMucSanPham { get; set; }
         public KhuyenMai? KhuyenMai { get; set; }
+        public TonKho? TonKho { get; set; }
         public ICollection<ChiTietHoaDonNhap> ChiTietHoaDonNhaps { get; set; } = new List<ChiTietHoaDonNhap>();
         public ICollection<ChiTietHoaDonBan> ChiTietHoaDonBans { get; set; } = new List<ChiTietHoaDonBan>();
         

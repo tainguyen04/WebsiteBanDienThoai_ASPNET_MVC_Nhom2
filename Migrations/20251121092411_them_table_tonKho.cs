@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace QLCHBanDienThoaiMoi.Migrations
 {
     /// <inheritdoc />
-    public partial class Updatedb : Migration
+    public partial class them_table_tonKho : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,7 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     LoaiKhuyenMai = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NgayBatDau = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NgayKetThuc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GiaTri = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false)
+                    GiaTri = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,7 +83,6 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     TenSanPham = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GiaNhap = table.Column<int>(type: "int", nullable: false),
                     GiaBan = table.Column<int>(type: "int", nullable: false),
-                    SoLuongTon = table.Column<int>(type: "int", nullable: false),
                     DanhMucId = table.Column<int>(type: "int", nullable: false),
                     KhuyenMaiId = table.Column<int>(type: "int", nullable: true),
                     HangSanXuat = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -167,6 +166,26 @@ namespace QLCHBanDienThoaiMoi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TonKho",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SanPhamId = table.Column<int>(type: "int", nullable: false),
+                    SoLuong = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TonKho", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TonKho_SanPham_SanPhamId",
+                        column: x => x.SanPhamId,
+                        principalTable: "SanPham",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ChiTietHoaDonNhap",
                 columns: table => new
                 {
@@ -221,6 +240,7 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     NgayBan = table.Column<DateTime>(type: "datetime2", nullable: false),
                     KhachHangId = table.Column<int>(type: "int", nullable: true),
                     NhanVienId = table.Column<int>(type: "int", nullable: true),
+                    DiaChiNhanHang = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TongTien = table.Column<int>(type: "int", nullable: false),
                     PhuongThucThanhToan = table.Column<int>(type: "int", nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false)
@@ -360,6 +380,12 @@ namespace QLCHBanDienThoaiMoi.Migrations
                 name: "IX_SanPham_KhuyenMaiId",
                 table: "SanPham",
                 column: "KhuyenMaiId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TonKho_SanPhamId",
+                table: "TonKho",
+                column: "SanPhamId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -373,6 +399,9 @@ namespace QLCHBanDienThoaiMoi.Migrations
 
             migrationBuilder.DropTable(
                 name: "PhieuBaoHanh");
+
+            migrationBuilder.DropTable(
+                name: "TonKho");
 
             migrationBuilder.DropTable(
                 name: "GioHang");

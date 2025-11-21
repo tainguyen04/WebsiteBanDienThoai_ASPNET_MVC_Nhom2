@@ -1,4 +1,4 @@
-
+﻿
 using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Models;
 
@@ -206,5 +206,7 @@ public class ApplicationDbContext : DbContext
 
 
     }
+
+public DbSet<QLCHBanDienThoaiMoi.Models.TonKho> TonKho { get; set; } = default!;
 }
 
