@@ -30,10 +30,21 @@
 
                         <dt class="col-sm-5">Phương thức thanh toán:</dt>
                         <dd class="col-sm-7">
-                            <select class="form-select form-select-sm"
-                                    asp-for="PhuongThucThanhToan"
-                                    asp-items="Html.GetEnumSelectList<PhuongThucThanhToan>()">
-                            </select>
+                            <div class="w-100">
+                                @foreach (var item in Html.GetEnumSelectList<PhuongThucThanhToan>())
+                                {
+                                    <div class="form-check py-1 w-100">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               asp-for="PhuongThucThanhToan"
+                                               value="@item.Value"
+                                               id="pttt_@item.Value" />
+                                        <label class="form-check-label w-100" for="pttt_@item.Value">
+                                            @item.Text
+                                        </label>
+                                    </div>
+                                }
+                            </div>
                             <span asp-validation-for="PhuongThucThanhToan" class="text-danger"></span>
                         </dd>
 
