@@ -6,7 +6,7 @@ using QLCHBanDienThoaiMoi.Models;
 
 namespace QLCHBanDienThoaiMoi.Services
 {
-    public class HoaDonBanService
+    public class HoaDonBanService : IHoaDonBanService
     {
         private readonly ApplicationDbContext _context;
 

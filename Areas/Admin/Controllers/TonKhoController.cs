@@ -8,15 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class TonKhoController : Controller
     {
-        private readonly TonKhoService _tonKhoService;
+        private readonly ITonKhoService _tonKhoService;
 
-        public TonKhoController(TonKhoService tonKhoService)
+        public TonKhoController(ITonKhoService tonKhoService)
         {
             _tonKhoService = tonKhoService;
         }
