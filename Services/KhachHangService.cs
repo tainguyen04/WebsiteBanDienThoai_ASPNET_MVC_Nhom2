@@ -20,7 +20,7 @@ namespace QLCHBanDienThoaiMoi.Services
         //Lấy khách hàng theo Id
         public async Task<KhachHang?> GetKhachHangById(int id)
         {
-            return await _context.KhachHang.FirstOrDefaultAsync(kh => kh.Id == id);
+            return await _context.KhachHang.FindAsync(id);
         }
         //Tạo mới khách hàng
         public async Task<bool> CreateKhachHangAsync(KhachHang khachHang)

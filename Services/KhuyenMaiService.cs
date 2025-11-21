@@ -20,7 +20,7 @@ namespace QLCHBanDienThoaiMoi.Services
         //Lấy khuyến mãi theo Id
         public async Task<KhuyenMai?> GetKhuyenMaiById(int id)
         {
-            return await _context.KhuyenMai.FirstOrDefaultAsync( km => km.Id == id);
+            return await _context.KhuyenMai.FindAsync(id);
         }
         //Tạo mới khuyến mãi
         public async Task<bool> CreateKhuyenMaiAsync(KhuyenMai khuyenMai)

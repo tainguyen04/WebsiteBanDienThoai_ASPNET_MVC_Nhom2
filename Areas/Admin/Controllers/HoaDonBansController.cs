@@ -7,25 +7,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
+using QLCHBanDienThoaiMoi.DTO;
 using QLCHBanDienThoaiMoi.Models;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class HoaDonBansController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IHoaDonBanService _hoaDonBanService;
+        private readonly IKhachHangService _khachHangService;
+        private readonly INhanVienService _nhanVienService;
 
-        public HoaDonBansController(ApplicationDbContext context)
+        public HoaDonBansController(IHoaDonBanService hoaDonBanService, IKhachHangService khachHangService, INhanVienService nhanVienService)
         {
-            _context = context;
+            _hoaDonBanService = hoaDonBanService;
+            _khachHangService = khachHangService;
+            _nhanVienService = nhanVienService;
         }
 
         // GET: Admin/HoaDonBans
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.HoaDonBan.Include(h => h.KhachHang).Include(h => h.NhanVien);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _hoaDonBanService.GetAllHoaDonBanAsync());
         }
 
         // GET: Admin/HoaDonBans/Details/5
@@ -36,23 +41,18 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var hoaDonBan = await _context.HoaDonBan
-                .Include(h => h.KhachHang)
-                .Include(h => h.NhanVien)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var hoaDonBan = await _hoaDonBanService.GetHoaDonBanAsync(id.Value);
             if (hoaDonBan == null)
             {
                 return NotFound();
             }
-
             return View(hoaDonBan);
         }
 
         // GET: Admin/HoaDonBans/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["KhachHangId"] = new SelectList(_context.KhachHang, "Id", "Id");
-            ViewData["NhanVienId"] = new SelectList(_context.NhanVien, "Id", "Id");
+            await LoadDataUser();
             return View();
         }
 
@@ -65,12 +65,9 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(hoaDonBan);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
             }
-            ViewData["KhachHangId"] = new SelectList(_context.KhachHang, "Id", "Id", hoaDonBan.KhachHangId);
-            ViewData["NhanVienId"] = new SelectList(_context.NhanVien, "Id", "Id", hoaDonBan.NhanVienId);
+            await LoadDataUser(hoaDonBan);
             return View(hoaDonBan);
         }
 
@@ -82,14 +79,19 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var hoaDonBan = await _context.HoaDonBan.FindAsync(id);
+            var hoaDonBan = await _hoaDonBanService.GetHoaDonBanAsync(id.Value);
             if (hoaDonBan == null)
             {
                 return NotFound();
             }
-            ViewData["KhachHangId"] = new SelectList(_context.KhachHang, "Id", "Id", hoaDonBan.KhachHangId);
-            ViewData["NhanVienId"] = new SelectList(_context.NhanVien, "Id", "Id", hoaDonBan.NhanVienId);
-            return View(hoaDonBan);
+            var hoaDonBanDTO = new UpdateHoaDonBanDTO
+            {
+                Id = hoaDonBan.Id,
+                TrangThai = hoaDonBan.TrangThai,
+                DiaChiNhanHang = hoaDonBan.DiaChiNhanHang
+            };
+            await LoadDataUser(hoaDonBan);
+            return View(hoaDonBanDTO);
         }
 
         // POST: Admin/HoaDonBans/Edit/5
@@ -97,76 +99,58 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NgayBan,KhachHangId,NhanVienId,DiaChiNhanHang,TongTien,PhuongThucThanhToan,TrangThai")] HoaDonBan hoaDonBan)
+        public async Task<IActionResult> Edit(int id, UpdateHoaDonBanDTO hoaDonBanDTO)
         {
-            if (id != hoaDonBan.Id)
-            {
-                return NotFound();
-            }
+            hoaDonBanDTO.Id = id;
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(hoaDonBan);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!HoaDonBanExists(hoaDonBan.Id))
+                   var hd = await _hoaDonBanService.UpdateHoaDonBanAsync(hoaDonBanDTO);
+                    if (!hd)
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw;
+                        TempData["SuccessMessage"] = "Cập nhật trạng thái hóa đơn thành công!";
+                        return RedirectToAction(nameof(Index));
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
             }
-            ViewData["KhachHangId"] = new SelectList(_context.KhachHang, "Id", "Id", hoaDonBan.KhachHangId);
-            ViewData["NhanVienId"] = new SelectList(_context.NhanVien, "Id", "Id", hoaDonBan.NhanVienId);
-            return View(hoaDonBan);
-        }
-
-        // GET: Admin/HoaDonBans/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var hoaDonBan = await _context.HoaDonBan
-                .Include(h => h.KhachHang)
-                .Include(h => h.NhanVien)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var hoaDonBan = await _hoaDonBanService.GetHoaDonBanAsync(id);
             if (hoaDonBan == null)
             {
                 return NotFound();
             }
-
-            return View(hoaDonBan);
+            await LoadDataUser(hoaDonBan);
+            return View(hoaDonBanDTO);
         }
 
+        
         // POST: Admin/HoaDonBans/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var hoaDonBan = await _context.HoaDonBan.FindAsync(id);
-            if (hoaDonBan != null)
+            var hoaDonBan = await _hoaDonBanService.DeleteHoaDonBanAsync(id);
+            if (!hoaDonBan)
             {
-                _context.HoaDonBan.Remove(hoaDonBan);
+                return NotFound();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private bool HoaDonBanExists(int id)
+        public async Task LoadDataUser(HoaDonBan? hoaDonBan = null)
         {
-            return _context.HoaDonBan.Any(e => e.Id == id);
+            var khList = await _khachHangService.GetAllKhachHangAsync();
+            var nvList = await _nhanVienService.GetAllNhanVienAsync();
+            ViewData["KhachHangId"] = new SelectList(khList, "Id", "TenKhachHang",hoaDonBan?.KhachHangId);
+            ViewData["NhanVienId"] = new SelectList(nvList, "Id", "TenNhanVien",hoaDonBan?.NhanVienId);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace QLCHBanDienThoaiMoi.Services
         //Lấy nhân viên theo Id
         public async Task<NhanVien?> GetNhanVienById(int id)
         {
-            return await _context.NhanVien.FirstOrDefaultAsync(nv => nv.Id == id);
+            return await _context.NhanVien.FindAsync(id);
         }
         //Tạo mới nhân viên
         public async Task<bool> CreateNhanVienAsync(NhanVien nhanVien)

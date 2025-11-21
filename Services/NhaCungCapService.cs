@@ -20,7 +20,7 @@ namespace QLCHBanDienThoaiMoi.Services
         //Lấy nhà cung cấp theo Id
         public async Task<NhaCungCap?> GetNhaCungCapById(int id)
         {
-            return await _context.NhaCungCap.FirstOrDefaultAsync(ncc => ncc.Id == id);
+            return await _context.NhaCungCap.FindAsync(id);
         }
         //Tạo mới nhà cung cấp
         public async Task<bool> CreateNhaCungCapAsync(NhaCungCap nhaCungCap)

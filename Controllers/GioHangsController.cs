@@ -9,14 +9,15 @@ using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Helpers;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Controllers
 {
     public class GioHangsController : Controller
     {
-        private readonly GioHangService _gioHangService;
+        private readonly IGioHangService _gioHangService;
         private readonly SessionHelper _sessionHelper;
-        public GioHangsController(GioHangService gioHangService,SessionHelper sessionHelper)
+        public GioHangsController(IGioHangService gioHangService,SessionHelper sessionHelper)
         {
             _gioHangService = gioHangService;
             _sessionHelper = sessionHelper;

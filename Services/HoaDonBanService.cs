@@ -2,7 +2,9 @@
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
+using QLCHBanDienThoaiMoi.DTO;
 using QLCHBanDienThoaiMoi.Models;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Services
 {
@@ -85,13 +87,13 @@ namespace QLCHBanDienThoaiMoi.Services
             var result = await _context.SaveChangesAsync();
             return result > 0;
         }
-        public async Task<bool> UpdateTrangThaiAsync(int id, TrangThaiHoaDon trangThai)
+        public async Task<bool> UpdateHoaDonBanAsync(UpdateHoaDonBanDTO hoaDonBanDTO)
         {
-            var existingHoaDonBan = await GetHoaDonBanAsync(id);
-            if (existingHoaDonBan == null)
-                return false;
-            existingHoaDonBan.TrangThai = trangThai;
-            _context.HoaDonBan.Update(existingHoaDonBan);
+            var hoaDonBan = await _context.HoaDonBan.FindAsync(hoaDonBanDTO.Id);
+            if (hoaDonBan == null) return false;
+            hoaDonBan.TrangThai = hoaDonBanDTO.TrangThai;
+            hoaDonBan.DiaChiNhanHang = hoaDonBanDTO.DiaChiNhanHang;
+            _context.HoaDonBan.Update(hoaDonBan);
             return await _context.SaveChangesAsync() > 0;
         }
     }

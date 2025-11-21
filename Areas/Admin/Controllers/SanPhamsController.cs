@@ -132,11 +132,6 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
             return View(sanPham);
         }
 
-        // GET: SanPhams/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            return View(await _sanPhamService.DeleteByIdAsync(id));
-        }
 
         // POST: SanPhams/Delete/5
         [HttpPost, ActionName("Delete")]

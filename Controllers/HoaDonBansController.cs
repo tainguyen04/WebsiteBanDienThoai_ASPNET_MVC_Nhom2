@@ -10,15 +10,16 @@ using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Helpers;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Controllers
 {
     public class HoaDonBansController : Controller
     {
-        private readonly HoaDonBanService _hoaDonBanService;
-        private readonly GioHangService _gioHangService;
+        private readonly IHoaDonBanService _hoaDonBanService;
+        private readonly IGioHangService _gioHangService;
         private readonly SessionHelper _sessionHelper;
-        public HoaDonBansController(HoaDonBanService hoaDonBanService, GioHangService gioHangService, SessionHelper sessionHelper)
+        public HoaDonBansController(IHoaDonBanService hoaDonBanService, IGioHangService gioHangService, SessionHelper sessionHelper)
         {
             _hoaDonBanService = hoaDonBanService;
             _gioHangService = gioHangService;

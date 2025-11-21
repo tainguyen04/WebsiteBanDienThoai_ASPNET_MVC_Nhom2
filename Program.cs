@@ -13,22 +13,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//builder.Services.Scan(scan => scan
-//    .FromAssemblyOf<Program>()
-//    .AddClasses(classes => classes.InNamespaces("QLCHBanDienThoaiMoi.Services"))
-//    .AsSelf()
-//    .WithScopedLifetime());
+// Thay thế toàn bộ AddScoped bằng:
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<Program>()
+    .AddClasses(classes => classes.InNamespaces("QLCHBanDienThoaiMoi.Services"))
+    .AsImplementedInterfaces()
+    .WithScopedLifetime());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SessionHelper>();
-builder.Services.AddScoped<SanPhamService>();
-builder.Services.AddScoped<GioHangService>();
-builder.Services.AddScoped<HoaDonBanService>();
-builder.Services.AddScoped<KhachHangService>();
-builder.Services.AddScoped<NhanVienService>();
-builder.Services.AddScoped<NhaCungCapService>();
-builder.Services.AddScoped<KhuyenMaiService>();
-builder.Services.AddScoped<DanhMucSanPhamService>();
-builder.Services.AddScoped<TonKhoService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options =>
 

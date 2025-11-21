@@ -2,6 +2,7 @@
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.DTO;
 using QLCHBanDienThoaiMoi.Models;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Services
 {

@@ -1,4 +1,5 @@
-﻿using QLCHBanDienThoaiMoi.Models;
+﻿using QLCHBanDienThoaiMoi.DTO;
+using QLCHBanDienThoaiMoi.Models;
 
 namespace QLCHBanDienThoaiMoi.Services.Interfaces
 {
@@ -8,6 +9,6 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
         Task<List<HoaDonBan>> GetAllHoaDonBanAsync();
         Task<bool> CreateHoaDonBanAsync(HoaDonBan hoaDonBan, List<ChiTietHoaDonBan> chiTiet);
         Task<bool> DeleteHoaDonBanAsync(int id);
-        Task<bool> UpdateTrangThaiAsync(int id, TrangThaiHoaDon trangThai)
+        Task<bool> UpdateHoaDonBanAsync(UpdateHoaDonBanDTO hoaDonBanDTO);
     }
 }

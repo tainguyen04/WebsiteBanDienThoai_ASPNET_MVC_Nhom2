@@ -9,15 +9,16 @@ using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Helpers;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly SanPhamService _sanPhamService;
-        private readonly GioHangService _gioHangService;
+        private readonly ISanPhamService _sanPhamService;
+        private readonly IGioHangService _gioHangService;
         private readonly SessionHelper _sessionHelper;
-        public HomeController(SanPhamService sanPhamService, GioHangService gioHangService,SessionHelper sessionHelper)
+        public HomeController(ISanPhamService sanPhamService, IGioHangService gioHangService,SessionHelper sessionHelper)
         {
             _sanPhamService = sanPhamService;
             _gioHangService = gioHangService;
