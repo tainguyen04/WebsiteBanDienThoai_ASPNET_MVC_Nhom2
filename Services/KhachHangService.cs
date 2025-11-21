@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Services
 {
-    public class KhachHangService
+    public class KhachHangService : IKhachHangService
     {
         private readonly ApplicationDbContext _context;
         public KhachHangService(ApplicationDbContext context)

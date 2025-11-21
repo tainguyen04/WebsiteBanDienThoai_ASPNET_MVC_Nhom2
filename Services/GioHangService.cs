@@ -5,7 +5,7 @@ using QLCHBanDienThoaiMoi.Models;
 
 namespace QLCHBanDienThoaiMoi.Services
 {
-    public class GioHangService
+    public class GioHangService : IGioHangService
     {
         private readonly ApplicationDbContext _context;
         public GioHangService(ApplicationDbContext context)

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 using SlugGenerator;
 
 namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
@@ -16,12 +17,10 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
     [Area("Admin")]
     public class SanPhamsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly SanPhamService _sanPhamService;
+        private readonly ISanPhamService _sanPhamService;
 
-        public SanPhamsController(ApplicationDbContext context, SanPhamService sanPhamService)
+        public SanPhamsController(ISanPhamService sanPhamService)
         {
-            _context = context;
             _sanPhamService = sanPhamService;
         }
 
@@ -126,14 +125,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SanPhamExists(sanPham.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
             }
             await LoadDropDownData(sanPham);
@@ -151,25 +143,12 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sanPham = await _context.SanPham.FindAsync(id);
-            if (sanPham != null)
+            var sp = await _sanPhamService.DeleteByIdAsync(id);
+            if (sp == null)
             {
-                if(!string.IsNullOrEmpty(sanPham.HinhAnh) && sanPham.HinhAnh != "default.png")
-                {
-                    var oldPath = Path.Combine("wwwroot", "images", sanPham.HinhAnh);
-                    if(System.IO.File.Exists(oldPath))
-                        System.IO.File.Delete(oldPath);
-                }
-                _context.SanPham.Remove(sanPham);
+                return NotFound();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool SanPhamExists(int id)
-        {
-            return _context.SanPham.Any(e => e.Id == id);
         }
         // Load dữ liệu cho dropdown
         public async Task LoadDropDownData(SanPham? sanPham = null)

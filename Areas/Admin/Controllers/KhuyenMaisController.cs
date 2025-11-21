@@ -9,15 +9,16 @@ using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class KhuyenMaisController : Controller
     {
-        private readonly KhuyenMaiService _khuyenMaiService;
+        private readonly IKhuyenMaiService _khuyenMaiService;
 
-        public KhuyenMaisController(KhuyenMaiService khuyenMaiService)
+        public KhuyenMaisController(IKhuyenMaiService khuyenMaiService)
         {
             _khuyenMaiService = khuyenMaiService;
         }

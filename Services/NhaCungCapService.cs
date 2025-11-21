@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Services
 {
-    public class NhaCungCapService
+    public class NhaCungCapService : INhaCungCapService
     {
         private readonly ApplicationDbContext _context;
         public NhaCungCapService(ApplicationDbContext context)

@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Services
 {
-    public class NhanVienService
+    public class NhanVienService : INhanVienService
     {
         private readonly ApplicationDbContext _context;
         public NhanVienService(ApplicationDbContext context)

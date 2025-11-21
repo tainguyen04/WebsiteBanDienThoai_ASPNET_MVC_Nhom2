@@ -3,16 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.DTO;
 using QLCHBanDienThoaiMoi.Models;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 using SlugGenerator;
 
 namespace QLCHBanDienThoaiMoi.Services
 {
-    public class SanPhamService
+    public class SanPhamService : ISanPhamService
     {
         private readonly ApplicationDbContext _context;
-        public SanPhamService(ApplicationDbContext context)
+        private readonly IDanhMucSanPhamService _danhMucSanPhamService;
+        public SanPhamService(ApplicationDbContext context, IDanhMucSanPhamService danhMucSanPhamService)
         {
             _context = context;
+            _danhMucSanPhamService = danhMucSanPhamService;
         }
         // Updated method to fix CS8602: Dereference of a possibly null reference.
         public async Task<List<SanPham>> GetSanPhamsAsync()
@@ -125,7 +128,7 @@ namespace QLCHBanDienThoaiMoi.Services
         //Lấy tất cả danh mục sản phẩm
         public async Task<List<DanhMucSanPham>> GetAllDanhMucAsync()
         {
-            return await _context.DanhMucSanPham.AsNoTracking().ToListAsync();
+            return await _danhMucSanPhamService.GetAllDanhMucSanPhamAsync();
         }
         //Lấy tất cả khuyến mãi
         public async Task<List<KhuyenMaiDTO>> GetAllKhuyenMaiAsync()

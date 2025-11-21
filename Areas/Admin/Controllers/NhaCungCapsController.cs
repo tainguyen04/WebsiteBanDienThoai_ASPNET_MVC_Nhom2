@@ -9,15 +9,16 @@ using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
+using QLCHBanDienThoaiMoi.Services.Interfaces;
 
 namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class NhaCungCapsController : Controller
     {
-        private readonly NhaCungCapService _nhaCungCapService;
+        private readonly INhaCungCapService _nhaCungCapService;
 
-        public NhaCungCapsController(NhaCungCapService nhaCungCapService)
+        public NhaCungCapsController(INhaCungCapService nhaCungCapService)
         {
             _nhaCungCapService = nhaCungCapService;
         }

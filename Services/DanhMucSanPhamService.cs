@@ -4,7 +4,7 @@ using QLCHBanDienThoaiMoi.Models;
 
 namespace QLCHBanDienThoaiMoi.Services
 {
-    public class DanhMucSanPhamService
+    public class DanhMucSanPhamService : IDanhMucSanPhamService
     {
         private readonly ApplicationDbContext _context;
         public DanhMucSanPhamService(ApplicationDbContext context)
