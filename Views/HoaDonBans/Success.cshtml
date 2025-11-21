@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 70vh;">
+    <div class="card shadow-lg text-center p-4" style="max-width: 400px;">
+        <div class="mb-3">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+        </div>
+        <h4 class="text-success mb-2">Đặt hàng thành công!</h4>
+        <p>Mã đơn hàng của bạn là <strong>#@ViewBag.HoaDonId</strong></p>
+        <p>Cảm ơn bạn đã mua hàng tại <strong>Shop Điện Thoại</strong>.</p>
+
+        <div class="mt-3 d-grid gap-2">
+            <a asp-action="Index" asp-controller="DonHang" class="btn btn-primary">
+                <i class="bi bi-clock-history"></i> Xem lịch sử đơn hàng
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-house"></i> Quay về trang chủ
+            </a>
+        </div>
+    </div>
+</div>

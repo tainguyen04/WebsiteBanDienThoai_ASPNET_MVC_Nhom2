@@ -8,7 +8,7 @@
         public string? HinhAnh { get; set; }
         public string? TenSanPham { get; set; }
         public int SoLuong { get; set; }
-        public decimal GiaBan { get; set; }
+        public int GiaBan { get; set; }
         public decimal GiaKhuyenMai { get; set; }
         public decimal TongTien => GiaKhuyenMai * SoLuong;
 

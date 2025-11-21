@@ -1,32 +1,61 @@
 ﻿@model QLCHBanDienThoaiMoi.Models.DanhMucSanPham
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa danh mục";
 }
 
-<h1>Edit</h1>
-
-<h4>DanhMucSanPham</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="TenDanhMuc" class="control-label"></label>
-                <input asp-for="TenDanhMuc" class="form-control" />
-                <span asp-validation-for="TenDanhMuc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-primary">
+            <i class="fas fa-edit me-2"></i>Chỉnh sửa danh mục
+        </h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại danh sách
+        </a>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-folder me-2"></i>Thông tin danh mục
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="mb-4">
+                            <label asp-for="TenDanhMuc" class="form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
+                            <input asp-for="TenDanhMuc" class="form-control form-control-lg" placeholder="Nhập tên danh mục" required />
+                            <span asp-validation-for="TenDanhMuc" class="text-danger small"></span>
+                        </div>
+
+                        @if (Model.SanPhams != null && Model.SanPhams.Any())
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Lưu ý:</strong> Danh mục này đang chứa 
+                                <span class="fw-bold">@Model.SanPhams.Count() sản phẩm</span>.
+                                Việc chỉnh sửa sẽ ảnh hưởng đến tất cả sản phẩm trong danh mục.
+                            </div>
+                        }
+
+                        <div class="d-flex gap-2 justify-content-end border-top pt-4">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i>Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save me-1"></i>Cập nhật danh mục
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

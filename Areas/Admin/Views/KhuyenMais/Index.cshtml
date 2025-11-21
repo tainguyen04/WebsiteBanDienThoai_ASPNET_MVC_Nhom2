@@ -1,65 +1,109 @@
 ﻿@model IEnumerable<QLCHBanDienThoaiMoi.Models.KhuyenMai>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý khuyến mãi";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TenKhuyenMai)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MoTa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LoaiKhuyenMai)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayBatDau)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayKetThuc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GiaTri)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TenKhuyenMai)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MoTa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoaiKhuyenMai)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayBatDau)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayKetThuc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GiaTri)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<div class="container mt-4">
+    <!-- Form thêm nhanh đơn giản -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Create" method="post" class="row g-2 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label small mb-1">Tên khuyến mãi</label>
+                    <input type="text" class="form-control form-control-sm" placeholder="Tên" name="TenKhuyenMai" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small mb-1">Mô tả</label>
+                    <input type="text" class="form-control form-control-sm" placeholder="Mô tả" name="MoTa">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small mb-1">Loại</label>
+                    <input type="text" class="form-control form-control-sm" placeholder="Loại khuyến mãi" name="LoaiKhuyenMai">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small mb-1">Ngày bắt đầu</label>
+                    <input type="date" class="form-control form-control-sm" name="NgayBatDau" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small mb-1">Ngày kết thúc</label>
+                    <input type="date" class="form-control form-control-sm" name="NgayKetThuc" required>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label small mb-1">Giá trị</label>
+                    <input type="number" class="form-control form-control-sm" placeholder="%" name="GiaTri" required>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="admin-table">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover rounded">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên khuyến mãi</th>
+                    <th>Mô tả</th>
+                    <th>Loại</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Giá trị</th>
+                    <th class="text-center">Tùy chỉnh</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.TenKhuyenMai</td>
+                        <td>@item.MoTa</td>
+                        <td>@item.LoaiKhuyenMai</td>
+                        <td>@item.NgayBatDau.ToString("dd/MM/yyyy")</td>
+                        <td>@item.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+                        <td class="fw-bold text-success">@item.GiaTri%</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <button class="btn btn-link btn-sm text-muted p-0" type="button"
+                                        data-bs-toggle="dropdown" title="Thao tác" style="border: none; background: none;">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end position-absolute">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
+                                            <i class="fas fa-edit me-2"></i>Sửa
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">
+                                            <i class="fas fa-eye me-2"></i>Chi tiết
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                            <button type="submit" class="dropdown-item text-danger" title="Xóa"
+                                                    onclick="confirmDelete(event,this, '@item.TenKhuyenMai')">
+                                                <i class="fas fa-trash me-2"></i>Xóa
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@if (!Model.Any())
+{
+    <div class="text-center text-muted py-5">
+        <i class="fas fa-percentage fa-2x mb-3"></i>
+        <p>Chưa có khuyến mãi nào</p>
+    </div>
 }
-    </tbody>
-</table>

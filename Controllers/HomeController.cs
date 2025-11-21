@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
+using QLCHBanDienThoaiMoi.Helpers;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
 
@@ -15,31 +16,19 @@ namespace QLCHBanDienThoaiMoi.Controllers
     {
         private readonly SanPhamService _sanPhamService;
         private readonly GioHangService _gioHangService;
-        public HomeController(SanPhamService sanPhamService, GioHangService gioHangService)
+        private readonly SessionHelper _sessionHelper;
+        public HomeController(SanPhamService sanPhamService, GioHangService gioHangService,SessionHelper sessionHelper)
         {
             _sanPhamService = sanPhamService;
             _gioHangService = gioHangService;
-        }
-        public string EnsureSessionIdExists()
-        {
-            var sesionId = HttpContext.Session.GetString("CartSessionId")?.Trim();
-            if (string.IsNullOrEmpty(sesionId))
-            {
-                sesionId = Guid.NewGuid().ToString();
-                HttpContext.Session.SetString("CartSessionId", sesionId);
-            }
-            return sesionId;
-        }
-        public int? GetKhachHangId()
-        {
-            return HttpContext.Session.GetInt32("KhachHangId");
+            _sessionHelper = sessionHelper;
         }
         // GET: Home
         public async Task<IActionResult> Index()
         {
             var sanPhams = await _sanPhamService.GetSanPhamHomePageAsync();
-            string sessionId = EnsureSessionIdExists();
-            int? khachHangId = GetKhachHangId();
+            string sessionId = _sessionHelper.EnsureSessionIdExists();
+            int? khachHangId = _sessionHelper.GetKhachHangId();
             await _gioHangService.CreateGioHangAsync(sessionId, khachHangId);
             return View(sanPhams);
         }

@@ -1,3 +1,10 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Index", "ThongKe", new { area = "Admin" })">
+            <i class="fa fa-chart-bar"></i> Thống kê doanh thu
+        </a>
+    </li>
+
 }

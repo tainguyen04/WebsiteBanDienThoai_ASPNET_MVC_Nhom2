@@ -6,14 +6,14 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-gold"><i class="fas fa-box me-2"></i>Quản lý Sản phẩm</h2>
-    <a asp-action="Create" class="btn btn-gold">
+    <a asp-action="Create" class="btn btn-primary">
         <i class="fas fa-plus me-2"></i>Thêm sản phẩm mới
     </a>
 </div>
 
 <div class="admin-table">
     <div class="table-responsive">
-        <table class="table table-dark table-hover mb-0">
+        <table class="table table-hover mb-0">
             <thead>
                 <tr class="text-center">
                     <th width="100">Hình ảnh</th>
@@ -22,7 +22,7 @@
                     <th width="110">Tồn kho</th>
                     <th width="120">Danh mục</th>
                     <th width="120">Khuyến mãi</th>
-                    <th width="150">Thao tác</th>
+                    <th width="150">Tùy chỉnh</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,8 +39,7 @@
                             <small class="text-muted">@item.HangSanXuat</small>
                         </td>
                         <td>
-                            <div class="text-success fw-bold fst-italic text-end" style="width:max-content;">@Html.FormatPrice(item.GiaBan)</div>
-                            
+                            <div class="text-success fw-bold fst-italic text-end" style="width:max-content;">@Html.FormatPrice(item.GiaKhuyenMai)</div>
                         </td>
                         <td class="text-end">
                             <span class="badge @(item.SoLuongTon > 0 ? "bg-success" : "bg-danger")">
@@ -59,17 +58,33 @@
                             }
                         </td>
                         <td class="text-center">
-                            <div class="btn-group btn-group-sm column-gap-sm-1">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning" title="Sửa">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info" title="Chi tiết">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Xóa">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                            <div class="dropdown">
+                                <button class="btn btn-link btn-sm text-muted p-0" type="button"
+                                        data-bs-toggle="dropdown" title="Thao tác" style="border: none; background: none;">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end position-absolute">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
+                                            <i class="fas fa-edit me-2"></i>Sửa
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">
+                                            <i class="fas fa-eye me-2"></i>Chi tiết
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                            <button type="submit" class="dropdown-item text-danger" title="Xóa"
+                                                    onclick="confirmDelete(event,this, '@item.TenSanPham')">
+                                                <i class="fas fa-trash me-2"></i>Xóa
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </div>
+                                
                         </td>
                     </tr>
                 }

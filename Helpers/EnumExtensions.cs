@@ -13,5 +13,14 @@ namespace QLCHBanDienThoaiMoi.Helpers
                 _ => "<span class='badge bg-secondary'>Không xác định</span>"
             };
         }
+        public static string GetBadgeHtml(PhuongThucThanhToan phuongThuc)
+        {
+            return phuongThuc switch
+            {
+                PhuongThucThanhToan.TienMat => "<span class='badge bg-primary'>Tiền mặt</span>",
+                PhuongThucThanhToan.ChuyenKhoan => "<span class='badge bg-info text-dark'>Chuyển khoản</span>",
+                _ => "<span class='badge bg-secondary'>Không xác định</span>"
+            };
+        }
     }
 }

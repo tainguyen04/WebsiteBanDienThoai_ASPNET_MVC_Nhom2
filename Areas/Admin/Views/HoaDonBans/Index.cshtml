@@ -1,0 +1,107 @@
+﻿@model IEnumerable<QLCHBanDienThoaiMoi.Models.HoaDonBan>
+
+@{
+    ViewData["Title"] = "Quản lý Hóa đơn bán";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary"><i class="fas fa-receipt me-2"></i>Quản lý Hóa đơn bán</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Tạo hóa đơn mới
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="admin-table">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr class="text-center">
+                            <th>
+                                Ngày bán
+                            </th>
+                            <th>
+                                Khách hàng
+                            </th>
+                            <th>
+                                Nhân viên
+                            </th>
+                            <th class="w-50">
+                                Địa chỉ nhận hàng
+                            </th>
+                            <th>
+                                Tổng tiền
+                            </th>
+                            <th >
+                                Phương thức TT
+                            </th>
+                            <th>
+                                Trạng thái
+                            </th>
+                            <th>Tùy chỉnh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark">
+                                        @item.NgayBan.ToString("dd/MM/yyyy")
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info">@item.KhachHang?.TenKhachHang</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">@item.NhanVien?.TenNhanVien</span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">@item.DiaChiNhanHang</small>
+                                </td>
+                                <td class="text-end fw-bold text-success text-nowrap">
+                                    @Html.FormatPrice(item.TongTien)
+                                </td>
+                                <td>
+                                    @Html.Raw(EnumExtensions.GetBadgeHtml(item.PhuongThucThanhToan))
+                                </td>
+                                <td>
+                                    @Html.Raw(EnumExtensions.GetBadgeHtml(item.TrangThai))
+                                </td>
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm text-muted p-0" type="button"
+                                                data-bs-toggle="dropdown" title="Thao tác" style="border: none; background: none;">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end position-absolute">
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
+                                                    <i class="fas fa-edit me-2"></i>Sửa
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">
+                                                    <i class="fas fa-eye me-2"></i>Chi tiết
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="dropdown-item text-danger" title="Xóa"
+                                                            onclick="confirmDelete(event,this, '@item.Id')">
+                                                        <i class="fas fa-trash me-2"></i>Xóa
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

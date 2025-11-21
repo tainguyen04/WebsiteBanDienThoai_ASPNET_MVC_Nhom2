@@ -143,6 +143,10 @@ namespace QLCHBanDienThoaiMoi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("DiaChiNhanHang")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("KhachHangId")
                         .HasColumnType("int");
 
@@ -226,8 +230,8 @@ namespace QLCHBanDienThoaiMoi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("GiaTri")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("LoaiKhuyenMai")
                         .HasColumnType("nvarchar(max)");

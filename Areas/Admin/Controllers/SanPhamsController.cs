@@ -62,8 +62,15 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _sanPhamService.CreateSanPhamAsync(file,sanPham);
-                if(result)
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Thêm sản phẩm thành công!";
                     return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Có lỗi xảy ra khi thêm sản phẩm.");
+                }      
                 
             }
             await LoadDropDownData(sanPham);
@@ -92,13 +99,15 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(IFormFile file,int id, [Bind("Id,TenSanPham,GiaNhap,GiaBan,SoLuongTon,DanhMucId,HangSanXuat,MoTa,HinhAnh,KhuyenMaiId")] SanPham sanPham)
+        public async Task<IActionResult> Edit(IFormFile? file,int id, [Bind("Id,TenSanPham,GiaNhap,GiaBan,SoLuongTon,DanhMucId,HangSanXuat,MoTa,HinhAnh,KhuyenMaiId")] SanPham sanPham)
         {
             if (id != sanPham.Id)
             {
                 return NotFound();
             }
 
+            // Loại bỏ kiểm tra lỗi cho HinhAnh vì nó được xử lý riêng
+            ModelState.Remove("HinhAnh");
             if (ModelState.IsValid)
             {
                 try
@@ -108,7 +117,12 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
                     {
                         return NotFound();
                     }
-                    RedirectToAction(nameof(Index));
+                    else
+                    {
+                        TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công!";
+                        return RedirectToAction(nameof(Index));
+                    }
+                        
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -129,7 +143,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         // GET: SanPhams/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            return View(_sanPhamService.DeleteByIdAsync(id));
+            return View(await _sanPhamService.DeleteByIdAsync(id));
         }
 
         // POST: SanPhams/Delete/5
@@ -157,6 +171,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         {
             return _context.SanPham.Any(e => e.Id == id);
         }
+        // Load dữ liệu cho dropdown
         public async Task LoadDropDownData(SanPham? sanPham = null)
         {
             var khuyenMais = (await _sanPhamService.GetAllKhuyenMaiAsync())

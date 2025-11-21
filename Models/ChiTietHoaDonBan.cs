@@ -21,6 +21,6 @@ namespace QLCHBanDienThoaiMoi.Models
         public HoaDonBan? HoaDonBan { get; set; } 
         public SanPham? SanPham { get; set; }
         [NotMapped]
-        public decimal ThanhTien => SoLuong * GiaBan * (1 - (KhuyenMai ?? 0) / 100);
+        public decimal ThanhTien => SoLuong * GiaBan;
     }
 }

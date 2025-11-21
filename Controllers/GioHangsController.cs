@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
+using QLCHBanDienThoaiMoi.Helpers;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services;
 
@@ -14,29 +15,17 @@ namespace QLCHBanDienThoaiMoi.Controllers
     public class GioHangsController : Controller
     {
         private readonly GioHangService _gioHangService;
-        public GioHangsController(GioHangService gioHangService)
+        private readonly SessionHelper _sessionHelper;
+        public GioHangsController(GioHangService gioHangService,SessionHelper sessionHelper)
         {
             _gioHangService = gioHangService;
-        }
-        public string EnsureSessionIdExists()
-        {
-            var sesionId = HttpContext.Session.GetString("CartSessionId")?.Trim();
-            if (string.IsNullOrEmpty(sesionId))
-            {
-                sesionId = Guid.NewGuid().ToString();
-                HttpContext.Session.SetString("CartSessionId", sesionId);
-            }
-            return sesionId;
-        }
-        public int? GetKhachHangId()
-        {
-            return HttpContext.Session.GetInt32("KhachHangId");
+            _sessionHelper = sessionHelper;
         }
         // GET: GioHangs
         public async Task<IActionResult> Index()
         {
-            var sessionId = EnsureSessionIdExists();
-            int? khachHangId = GetKhachHangId(); // Lấy từ người dùng đăng nhập nếu có
+            var sessionId = _sessionHelper.EnsureSessionIdExists();
+            int? khachHangId = _sessionHelper.GetKhachHangId(); // Lấy từ người dùng đăng nhập nếu có
             Console.WriteLine($"SessionId: {sessionId}, KhachHangId: {khachHangId}");
             var gioHang = await _gioHangService.GetGioHangAsync(sessionId, khachHangId);
             return View(gioHang);
@@ -47,8 +36,8 @@ namespace QLCHBanDienThoaiMoi.Controllers
         // Thêm vào giỏ hàng khi người dùng chọn sản phẩm
         public async Task<IActionResult> AddToCart(int sanPhamId, int soLuong)
         {
-            string sessionId = EnsureSessionIdExists();
-            int? khachHangId = GetKhachHangId();
+            string sessionId = _sessionHelper.EnsureSessionIdExists();
+            int? khachHangId = _sessionHelper.GetKhachHangId();
             await _gioHangService.AddToCardAsync(sessionId, sanPhamId, khachHangId, soLuong);
             TempData["ThongBao"] = "Đã thêm vào giỏ hàng";
             return Redirect(Request.Headers["Referer"].ToString());
@@ -62,9 +51,9 @@ namespace QLCHBanDienThoaiMoi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int sanPhamId)
         {
-            string? sessionId = EnsureSessionIdExists();
-            int? khachHangId = GetKhachHangId();
-            var gioHang = await _gioHangService.DeletedSanPhamAsync(sessionId,khachHangId,sanPhamId);
+            string? sessionId = _sessionHelper.EnsureSessionIdExists();
+            int? khachHangId = _sessionHelper.GetKhachHangId();
+            var gioHang = await _gioHangService.DeletedSanPhamFromGioHangAsync(sessionId,khachHangId,sanPhamId);
             return RedirectToAction(nameof(Index));
         }
 

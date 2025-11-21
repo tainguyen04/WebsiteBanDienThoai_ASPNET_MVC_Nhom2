@@ -6,6 +6,10 @@ namespace QLCHBanDienThoaiMoi.Data;
 
 public class ApplicationDbContext : DbContext
 {
+    public ApplicationDbContext()
+    {
+    }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
@@ -196,7 +200,7 @@ public class ApplicationDbContext : DbContext
             .HasKey(k => k.Id);
         modelBuilder.Entity<KhuyenMai>()
             .Property(k => k.GiaTri)
-            .HasPrecision(5, 2);
+            .HasPrecision(18, 2);
 
 
 

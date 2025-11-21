@@ -4,32 +4,65 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Quản lý danh mục</h2>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TenDanhMuc)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TenDanhMuc)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                    <tr>
+                        <th width="80%">Tên danh mục</th>
+                        <th width="20%" class="text-center">Tùy chỉnh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-bold">@item.TenDanhMuc</div>
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <button class="btn btn-link btn-sm text-muted p-0" type="button"
+                                            data-bs-boundary="viewport"
+                                            data-bs-toggle="dropdown" title="Thao tác" style="border: none; background: none;">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end position-absolute">
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
+                                                <i class="fas fa-edit me-2"></i>Sửa
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">
+                                                <i class="fas fa-eye me-2"></i>Chi tiết
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                <button type="submit" class="dropdown-item text-danger" title="Xóa"
+                                                        onclick="confirmDelete(event,this, '@item.TenDanhMuc')">
+                                                    <i class="fas fa-trash me-2"></i>Xóa
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-5">
+            <i class="fas fa-folder fa-2x mb-3"></i>
+            <p>Chưa có danh mục nào</p>
+        </div>
+    }
+</div>
