@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container mt-5" style="max-width: 450px;">
+    <h3 class="text-center mb-4">Đăng nhập</h3>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Tên đăng nhập</label>
+            <input name="username" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mật khẩu</label>
+            <input name="password" type="password" class="form-control" required />
+        </div>
+
+        <button class="btn btn-primary w-100">Đăng nhập</button>
+    </form>
+
+    <div class="text-center mt-3">
+        <a asp-action="Register">Chưa có tài khoản? Đăng ký</a>
+    </div>
+</div>

@@ -32,6 +32,31 @@
                         <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm sản phẩm...">
                         <button type="submit" class="btn btn-primary ms-2">Tìm</button>
                     </form>
+                    <ul class="navbar-nav ms-auto">
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link">
+                                    Xin chào, <strong>@User.Identity.Name</strong>
+                                </span>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                            </li>
+                        }
+
+                    </ul>
 
 
                     <!-- Các liên kết bên phải -->
@@ -47,9 +72,9 @@
                             </a>
                         </li>
 
-                        <a class="btn btn-primary" asp-controller="Account" asp-action="Login">
+                        @* <a class="btn btn-primary" asp-controller="Account" asp-action="Login">
                             <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
-                        </a>
+                        </a> *@
 
 
                     </ul>
