@@ -43,5 +43,16 @@ namespace QLCHBanDienThoaiMoi.Services
         {
             return await _context.DanhMucSanPham.FirstOrDefaultAsync(dm => dm.Id == id);
         }
+        public async Task<IEnumerable<DanhMucSanPham>> SearchAsync(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return await _context.DanhMucSanPham.ToListAsync();
+
+            keyword = keyword.Trim().ToLower();
+
+            return await _context.DanhMucSanPham
+                .Where(x => x.TenDanhMuc.ToLower().Contains(keyword))
+                .ToListAsync();
+        }
     }
 }

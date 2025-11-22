@@ -9,5 +9,6 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
         Task<bool> UpdateDanhMucSanPhamAsync(DanhMucSanPham danhMuc);
         Task<bool> DeleteDanhMucSanPhamAsync(int id);
         Task<DanhMucSanPham?> GetDanhMucSanPhamByIdAsync(int id);
+        Task<IEnumerable<DanhMucSanPham>> SearchAsync(string keyword);
     }
 }

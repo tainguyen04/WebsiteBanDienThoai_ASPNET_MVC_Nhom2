@@ -1,0 +1,39 @@
+﻿@model IEnumerable<QLCHBanDienThoaiMoi.Models.SanPham>
+
+<h2>Tìm kiếm sản phẩm</h2>
+
+<form method="get">
+    <input type="text" name="keyword" value="@ViewBag.Keyword" placeholder="Nhập tên sản phẩm..." class="form-control" />
+    <button type="submit" class="btn btn-primary mt-2">Tìm kiếm</button>
+</form>
+
+<hr />
+
+@if (!Model.Any())
+{
+    <p>Không tìm thấy sản phẩm.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Hãng</th>
+                <th>Danh mục</th>
+                <th>Giá bán</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sp in Model)
+            {
+                <tr>
+                    <td>@sp.TenSanPham</td>
+                    <td>@sp.HangSanXuat</td>
+                    <td>@sp.DanhMucSanPham?.TenDanhMuc</td>
+                    <td>@sp.GiaBan.ToString("N0") VNĐ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

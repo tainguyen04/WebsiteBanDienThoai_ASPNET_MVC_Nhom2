@@ -177,5 +177,27 @@ namespace QLCHBanDienThoaiMoi.Services
 
             return fileName;
         }
+        public SanPhamService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<SanPham>> SearchAsync(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return await _context.SanPham.ToListAsync();
+
+            keyword = keyword.Trim().ToLower();
+
+            return await _context.SanPham
+                .Include(x => x.DanhMucSanPham)
+                .Include(x => x.KhuyenMai)
+                .Where(x =>
+                    x.TenSanPham.ToLower().Contains(keyword) ||
+                    x.HangSanXuat.ToLower().Contains(keyword) ||
+                    x.DanhMucSanPham.TenDanhMuc.ToLower().Contains(keyword)
+                )
+                .ToListAsync();
+        }
     }
 }
