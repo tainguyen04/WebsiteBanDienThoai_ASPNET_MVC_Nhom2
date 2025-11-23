@@ -100,17 +100,6 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
 
         
 
-        // POST: Admin/NhanViens/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var nhanVien = await _nhanVienService.DeleteNhanVienAsync(id);
-            if (!nhanVien)
-            {
-                return NotFound();
-            }
-            return RedirectToAction(nameof(Index));
-        }
+        
     }
 }

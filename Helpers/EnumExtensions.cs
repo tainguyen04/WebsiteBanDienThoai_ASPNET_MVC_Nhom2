@@ -1,4 +1,5 @@
 ﻿using QLCHBanDienThoaiMoi.Models;
+using System;
 
 namespace QLCHBanDienThoaiMoi.Helpers
 {
@@ -22,5 +23,25 @@ namespace QLCHBanDienThoaiMoi.Helpers
                 _ => "<span class='badge bg-secondary'>Không xác định</span>"
             };
         }
+        public static string GetBadgeHtml(VaiTro vaiTro)
+        {
+            return vaiTro switch
+            {
+                VaiTro.Admin => "<span><i class='fas fa-crown me-1'></i> Quản trị</span>",
+                VaiTro.User => "<span><i class='fas fa-user me-1'></i> Người dùng</span>",
+                _ => "<span class='badge bg-secondary'>Không xác định</span>"
+            };
+        }
+
+        public static string GetBadgeHtml(TrangThaiTaiKhoan trangThai)
+        {
+            return trangThai switch
+            {
+                TrangThaiTaiKhoan.Locked => "<span><i class='fas fa-lock me-1'></i> Đã khóa</span>",
+                TrangThaiTaiKhoan.Active => "<span><i class='fas fa-check-circle me-1'></i> Hoạt động</span>",
+                _ => "<span class='badge bg-secondary'>Không xác định</span>"
+            };
+        }
+
     }
 }

@@ -15,7 +15,9 @@ namespace QLCHBanDienThoaiMoi.Services
         //Lấy tất cả khách hàng
         public async Task<List<KhachHang>> GetAllKhachHangAsync()
         {
-            return await _context.KhachHang.ToListAsync();
+            return await _context.KhachHang
+                                .Include(tk => tk.TaiKhoan)
+                                .ToListAsync();
         }
         //Lấy khách hàng theo Id
         public async Task<KhachHang?> GetKhachHangById(int id)
@@ -32,17 +34,6 @@ namespace QLCHBanDienThoaiMoi.Services
         public async Task<bool> UpdateKhachHangAsync(KhachHang khachHang)
         {
             _context.KhachHang.Update(khachHang);
-            return await _context.SaveChangesAsync() > 0;
-        }
-        //Xóa khách hàng
-        public async Task<bool> DeleteKhachHangAsync(int id)
-        {
-            var khachHang = await _context.KhachHang.FindAsync(id);
-            if (khachHang == null)
-            {
-                return false;
-            }
-            _context.KhachHang.Remove(khachHang);
             return await _context.SaveChangesAsync() > 0;
         }
     }
