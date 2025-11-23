@@ -81,15 +81,45 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li class="nav-item">
-                            <span class="nav-link">
-                                Xin chào, <strong>@User.Identity.Name</strong>
-                            </span>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
-                        </li>
+                            <li class="nav-item dropdown">
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center"
+                                            type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user me-2"></i>
+                                        <span class="me-2">@User.Identity.Name</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li class="dropdown-header">
+                                            <div class="text-center">
+                                                <i class="fas fa-user-circle fa-2x text-primary mb-2"></i>
+                                                <h6 class="mb-0">@User.Identity.Name</h6>
+                                            </div>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-user-edit me-2"></i>Cập nhật thông tin
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-lock me-2"></i>Đổi mật khẩu
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
                     }
                     else
                     {

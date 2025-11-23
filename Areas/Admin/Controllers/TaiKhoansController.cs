@@ -94,7 +94,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id,VaiTro vaiTro)
+        public async Task<IActionResult> Edit(int? id,VaiTro newVaiTro)
         {
             if (id == null)
             {
@@ -105,7 +105,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
             {
                 try
                 {
-                    var tk = await _taiKhoanService.UpdateTaiKhoanAsync(id.Value,vaiTro);
+                    var tk = await _taiKhoanService.UpdateTaiKhoanAsync(id.Value, newVaiTro);
                     if (!tk)
                     {
                         return NotFound();

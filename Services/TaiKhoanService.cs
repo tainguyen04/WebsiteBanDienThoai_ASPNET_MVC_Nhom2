@@ -118,13 +118,35 @@ namespace QLCHBanDienThoaiMoi.Services
             }
         }
 
-        public async Task<bool> UpdateTaiKhoanAsync(int id, VaiTro vaiTro)
+        public async Task<bool> UpdateTaiKhoanAsync(int id, VaiTro newVaiTro)
         {
             try
             {
                 var existing = await GetTaiKhoanByIdAsync(id);
                 if (existing == null) return false;
-                existing.VaiTro = vaiTro;
+                var oldVaitro = existing.VaiTro;
+                if(oldVaitro == newVaiTro) return true;
+          
+                existing.VaiTro = newVaiTro;
+                if(oldVaitro == VaiTro.Admin && newVaiTro == VaiTro.User)
+                {
+                    if(existing.NhanVien != null)
+                    {
+                        _context.NhanVien.Remove(existing.NhanVien);
+                        existing.NhanVien = null;
+                    }
+                    if(existing.KhachHang == null)
+                        existing.KhachHang = new KhachHang();
+                }else if(oldVaitro == VaiTro.User && newVaiTro == VaiTro.Admin)
+                {
+                    if (existing.KhachHang != null)
+                    {
+                        _context.KhachHang.Remove(existing.KhachHang);
+                        existing.KhachHang = null;
+                    }
+                    if (existing.NhanVien == null)
+                        existing.NhanVien = new NhanVien();
+                }
                 _context.TaiKhoan.Update(existing);
                 return await _context.SaveChangesAsync() > 0;
             }
