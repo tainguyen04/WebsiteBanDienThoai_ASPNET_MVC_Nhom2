@@ -1,114 +1,163 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - QLCHBanDienThoaiMoi</title>
-    <script type="importmap"></script>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/QLCHBanDienThoaiMoi.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+          crossorigin="anonymous" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.23.0/sweetalert2.min.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-light fixed-top">
-            <div class="container-fluid">
-                <!-- Logo / Tên thương hiệu -->
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="margin-left:30px;">
-                    QLCHBanDienThoaiMoi
-                </a>
-                <!-- Nội dung Navbar -->
-                <div class="collapse navbar-collapse" id="mynavbar">
-                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" asp-controller="Home" asp-action="Index">Trang chủ</a>
-                        </li>
-                    </ul>
 
-                    <form asp-controller="SanPham" asp-action="Search" method="get" class="d-flex ms-4" style="width: 300px;">
-                        <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm sản phẩm...">
-                        <button type="submit" class="btn btn-primary ms-2">Tìm</button>
-                    </form>
-                    <ul class="navbar-nav ms-auto">
+<header>
+    <nav class="navbar navbar-expand-sm navbar-light bg-light shadow-sm fixed-top">
+        <div class="container-fluid">
 
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <span class="nav-link">
-                                    Xin chào, <strong>@User.Identity.Name</strong>
-                                </span>
-                            </li>
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index" style="margin-left:20px;">
+                QLCHBanDienThoaiMoi
+            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
-                            </li>
-                        }
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                    </ul>
+            <div class="collapse navbar-collapse" id="mainNavbar">
 
+                <!-- Left Menu -->
+                <ul class="navbar-nav me-auto mb-2 mb-sm-0">
 
-                    <!-- Các liên kết bên phải -->
-                    <ul class="navbar-nav mb-2 mb-sm-0" style="margin-right:30px;gap:5px;">
-                        <li class="nav-item">
-                            <a asp-area="" asp-controller="GioHangs" asp-action="Index" class="btn btn-outline-primary">
-                                <i class="fa-solid fa-cart-shopping"></i> Giỏ Hàng
-                                @if (ViewBag.soSanPham != null && ViewBag.soSanPham > 0)
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                    </li>
+
+                    <!-- Dropdown Danh Mục -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Danh mục
+                        </a>
+                        <ul class="dropdown-menu shadow">
+
+                            @if (ViewBag.DanhMuc != null)
+                            {
+                                foreach (var dm in ViewBag.DanhMuc)
                                 {
-                                    <span class="badge bg-danger">@ViewBag.soSanPham</span>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="SanPham"
+                                           asp-action="TheoDanhMuc"
+                                           asp-route-id="@dm.Id">
+                                            @dm.TenDanhMuc
+                                        </a>
+                                    </li>
                                 }
+                            }
+                            else
+                            {
+                                <li><span class="dropdown-item text-muted">Không có danh mục</span></li>
+                            }
 
-                            </a>
+                        </ul>
+                    </li>
+
+                </ul>
+
+                <!-- Search -->
+                <form asp-controller="SanPham" asp-action="Search" method="get"
+                      class="d-flex mx-auto" style="max-width: 320px;">
+                    <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm sản phẩm...">
+                    <button type="submit" class="btn btn-primary ms-2">Tìm</button>
+                </form>
+
+                <!-- User -->
+                <ul class="navbar-nav ms-auto">
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <span class="nav-link">
+                                Xin chào, <strong>@User.Identity.Name</strong>
+                            </span>
                         </li>
 
-                        @* <a class="btn btn-primary" asp-controller="Account" asp-action="Login">
-                            <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
-                        </a> *@
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                        </li>
+                    }
 
+                </ul>
 
-                    </ul>
-                </div>
+                <!-- Cart -->
+                <a asp-controller="GioHangs" asp-action="Index"
+                   class="btn btn-outline-primary ms-3 position-relative">
+
+                    <i class="fa-solid fa-cart-shopping"></i> Giỏ Hàng
+
+                    @if (ViewBag.soSanPham != null && ViewBag.soSanPham > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            @ViewBag.soSanPham
+                        </span>
+                    }
+                </a>
+
             </div>
-        </nav>
-
-    </header>
-
-
-    @RenderSection("FullWidthCarousel", required: false)
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - QLCHBanDienThoaiMoi - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.23.0/sweetalert2.min.js" integrity="sha512-pnPZhx5S+z5FSVwy62gcyG2Mun8h6R+PG01MidzU+NGF06/ytcm2r6+AaWMBXAnDHsdHWtsxS0dH8FBKA84FlQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-    @if (TempData["ThongBao"] != null)
-    {
-        <script>
-            var ThongBao = '@Html.Raw(TempData["ThongBao"])';
-        </script>
-    }
-    <script src="~/js/giohang.js"></script>
-    <script src="~/js/function.js" asp-append-version="true"></script>
+    </nav>
+</header>
+
+<!-- Body -->
+<div style="padding-top: 90px;"></div>
+
+@RenderSection("FullWidthCarousel", required: false)
+
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<!-- Footer -->
+<footer class="border-top footer text-muted mt-5 py-3">
+    <div class="container">
+        &copy; 2025 - QLCHBanDienThoaiMoi -
+        <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.23.0/sweetalert2.min.js"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
+@if (TempData["ThongBao"] != null)
+{
+    <script>
+        var ThongBao = '@Html.Raw(TempData["ThongBao"])';
+    </script>
+}
+
+<script src="~/js/giohang.js"></script>
+<script src="~/js/function.js" asp-append-version="true"></script>
+
 </body>
 </html>

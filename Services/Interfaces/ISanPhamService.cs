@@ -15,6 +15,8 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
         Task<List<KhuyenMaiDTO>> GetAllKhuyenMaiAsync();
         Task<string> UploadFileAsync(IFormFile file);
         Task<IEnumerable<SanPham>> SearchAsync(string keyword);
+        Task<IEnumerable<SanPhamDTO>> GetByDanhMucAsync(int danhMucId);
+
 
     }
 }

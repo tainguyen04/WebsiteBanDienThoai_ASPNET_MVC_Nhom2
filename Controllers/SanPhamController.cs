@@ -21,17 +21,19 @@ namespace QLCHBanDienThoaiMoi.Controllers
             var result = await _sanPhamService.SearchAsync(keyword ?? "");
             ViewBag.Keyword = keyword;
             return View(result);
+
         }
 
-        // --------------------------
-        // API SEARCH (JSON)
-        // --------------------------
-        [HttpGet]
-        [Route("api/sanpham/search")]
-        public async Task<IActionResult> SearchApi([FromQuery] string? keyword)
+        public async Task<IActionResult> TheoDanhMuc(int id)
         {
-            var result = await _sanPhamService.SearchAsync(keyword ?? "");
-            return Ok(result);
+            var result = await _sanPhamService.GetByDanhMucAsync(id);
+
+            if (result == null)
+                return NotFound();
+
+            ViewBag.IdDanhMuc = id;
+            return View(result);
         }
+
     }
 }

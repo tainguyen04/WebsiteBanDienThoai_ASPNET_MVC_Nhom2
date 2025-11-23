@@ -1,17 +1,19 @@
-﻿@model IEnumerable<QLCHBanDienThoaiMoi.Models.SanPham>
+﻿ 
+@model IEnumerable<QLCHBanDienThoaiMoi.DTO.SanPhamDTO>
+
 
 @{
-    ViewData["Title"] = "Kết quả tìm kiếm";
+    ViewData["Title"] = "Sản phẩm theo danh mục";
 }
 
 <h2 class="mb-4">
-    <i class="fas fa-search"></i> Kết quả tìm kiếm
+    <i class="fa-solid fa-list"></i> Sản phẩm theo danh mục
 </h2>
 
 @if (!Model.Any())
 {
     <div class="alert alert-warning">
-        Không tìm thấy sản phẩm nào.
+        Không có sản phẩm nào trong danh mục này.
     </div>
 }
 else
@@ -41,7 +43,7 @@ else
                                 @item.TenSanPham
                             </a>
 
-                            <!-- GIÁ -->
+                            <!-- GIÁ & KHUYẾN MẠI -->
                             @if ((item.KhuyenMai?.GiaTri ?? 0) > 0)
                             {
                                 <h6 class="text-danger mb-0 fst-italic">@Html.FormatPrice(item.GiaKhuyenMai)</h6>
@@ -61,7 +63,7 @@ else
                                 </h6>
                             }
 
-                            <!-- NÚT -->
+                            <!-- THÊM GIỎ HÀNG -->
                             <div class="mt-auto d-flex gap-2 justify-content-center">
 
                                 <form asp-controller="GioHangs" asp-action="AddToCart" method="post">
@@ -82,3 +84,4 @@ else
         </div>
     </div>
 }
+

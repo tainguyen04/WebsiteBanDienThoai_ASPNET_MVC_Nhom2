@@ -54,5 +54,9 @@ namespace QLCHBanDienThoaiMoi.Services
                 .Where(x => x.TenDanhMuc.ToLower().Contains(keyword))
                 .ToListAsync();
         }
+        public async Task<IEnumerable<DanhMucSanPham>> GetAllAsync()
+        {
+            return await _context.DanhMucSanPham.ToListAsync();
+        }
     }
 }

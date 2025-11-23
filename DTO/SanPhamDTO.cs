@@ -14,5 +14,7 @@ namespace QLCHBanDienThoaiMoi.DTO
         public string? TenKhuyenMai { get; set; }
         public decimal GiaKhuyenMai { get; set; }
         public decimal? PhanTramKhuyenMai { get; set; }
+        public KhuyenMai? KhuyenMai { get; set; }
+
     }
 }

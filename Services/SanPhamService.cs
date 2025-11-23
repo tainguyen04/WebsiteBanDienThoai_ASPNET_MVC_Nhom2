@@ -199,5 +199,19 @@ namespace QLCHBanDienThoaiMoi.Services
                 )
                 .ToListAsync();
         }
+        public async Task<IEnumerable<SanPhamDTO>> GetByDanhMucAsync(int danhMucId)
+        {
+            return await _context.SanPham
+                .Where(x => x.DanhMucId == danhMucId)
+                .Select(x => new SanPhamDTO
+                {
+                    Id = x.Id,
+                    TenSanPham = x.TenSanPham,
+                    GiaBan = x.GiaBan,
+                    HinhAnh = x.HinhAnh
+                })
+                .ToListAsync();
+        }
+
     }
 }

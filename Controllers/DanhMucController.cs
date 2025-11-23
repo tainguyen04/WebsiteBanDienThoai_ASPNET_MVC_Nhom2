@@ -21,16 +21,10 @@ namespace QLCHBanDienThoaiMoi.Controllers
             ViewBag.Keyword = keyword;
             return View(result);
         }
-
-        // --------------------------
-        // API SEARCH
-        // --------------------------
-        [HttpGet]
-        [Route("api/danhmuc/search")]
-        public async Task<IActionResult> SearchApi([FromQuery] string? keyword)
+        public async Task<IActionResult> DanhMucPartial()
         {
-            var result = await _danhMucService.SearchAsync(keyword ?? "");
-            return Ok(result);
+            var danhMucs = await _danhMucService.GetAllAsync();
+            return PartialView("_DanhMucPartial", danhMucs);
         }
     }
 }
