@@ -75,14 +75,6 @@
                                                 <i class="fas fa-eye me-2"></i>Chi tiết
                                             </a>
                                         </li>
-                                        <li>
-                                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
-                                                <button type="button" class="dropdown-item text-danger" title="Xóa"
-                                                        onclick="confirmDelete(event,this, '@item.TenKhachHang')">
-                                                    <i class="fas fa-trash me-2"></i>Xóa
-                                                </button>
-                                            </form>
-                                        </li>
                                     </ul>
                                 </div>
                             </td>

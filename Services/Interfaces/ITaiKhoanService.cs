@@ -12,7 +12,7 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
         Task<List<TaiKhoan>> GetAllTaiKhoanAsync();
         Task<TaiKhoan?> GetTaiKhoanByIdAsync(int? id);
         Task<bool> CreateTaiKhoanAsync(TaiKhoan taiKhoan);
-        Task<bool> UpdateTaiKhoanAsync(TaiKhoan taiKhoan);
+        Task<bool> UpdateTaiKhoanAsync(int id, VaiTro vaiTro);
         Task<bool> DeleteTaiKhoanAsync(int? id);
         Task<bool> LockTaiKhoanAsync(int  id);
         Task<bool> UnlockTaiKhoanAsync(int id);

@@ -94,9 +94,9 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TenDangNhap,MatKhau,VaiTro,TrangThai")] TaiKhoan taiKhoan)
+        public async Task<IActionResult> Edit(int? id,VaiTro vaiTro)
         {
-            if (id != taiKhoan.Id)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -105,14 +105,14 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
             {
                 try
                 {
-                    var tk = await _taiKhoanService.UpdateTaiKhoanAsync(taiKhoan);
+                    var tk = await _taiKhoanService.UpdateTaiKhoanAsync(id.Value,vaiTro);
                     if (!tk)
                     {
                         return NotFound();
                     }
                     else
                     {
-                        TempData["SuccessMessage"] = "Cập nhật tài khoản thành công";
+                        TempData["SuccessMessage"] = "Cập nhật vai trò tài khoản thành công";
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -122,6 +122,9 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
                 }
                 
             }
+            var taiKhoan = await _taiKhoanService.GetTaiKhoanByIdAsync(id);
+            if (taiKhoan == null) 
+                return NotFound(); 
             return View(taiKhoan);
         }
 

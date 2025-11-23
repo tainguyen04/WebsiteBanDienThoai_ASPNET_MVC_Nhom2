@@ -81,13 +81,19 @@ namespace QLCHBanDienThoaiMoi.Services
 
         public async Task<List<TaiKhoan>> GetAllTaiKhoanAsync()
         {
-            return await _context.TaiKhoan.ToListAsync();
+            return await _context.TaiKhoan
+                                .Include(kh => kh.KhachHang)
+                                .Include(nv => nv.NhanVien)
+                                .ToListAsync();
         }
 
         public async Task<TaiKhoan?> GetTaiKhoanByIdAsync(int? id)
         {
             if (id == null) return null;
-            return await _context.TaiKhoan.FindAsync(id);
+            return await _context.TaiKhoan
+                                .Include(kh => kh.KhachHang)
+                                .Include (nv => nv.NhanVien)
+                                .FirstOrDefaultAsync(tk => tk.Id == id);
         }
 
         public async Task<bool> CreateTaiKhoanAsync(TaiKhoan taiKhoan)
@@ -112,11 +118,14 @@ namespace QLCHBanDienThoaiMoi.Services
             }
         }
 
-        public async Task<bool> UpdateTaiKhoanAsync(TaiKhoan taiKhoan)
+        public async Task<bool> UpdateTaiKhoanAsync(int id, VaiTro vaiTro)
         {
             try
             {
-                _context.TaiKhoan.Update(taiKhoan);
+                var existing = await GetTaiKhoanByIdAsync(id);
+                if (existing == null) return false;
+                existing.VaiTro = vaiTro;
+                _context.TaiKhoan.Update(existing);
                 return await _context.SaveChangesAsync() > 0;
             }
             catch
@@ -127,9 +136,14 @@ namespace QLCHBanDienThoaiMoi.Services
 
         public async Task<bool> DeleteTaiKhoanAsync(int? id)
         {
-            var tk = await _context.TaiKhoan.FindAsync(id);
-            if(tk == null) return false;
-            _context.TaiKhoan.Remove(tk);
+            var taiKhoan = await GetTaiKhoanByIdAsync(id);
+            if(taiKhoan == null) return false;
+            if(taiKhoan.NhanVien != null)
+                _context.NhanVien.Remove(taiKhoan.NhanVien);
+            else if(taiKhoan.KhachHang != null)
+                _context.KhachHang.Remove(taiKhoan.KhachHang);
+
+            _context.TaiKhoan.Remove(taiKhoan);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -145,7 +159,7 @@ namespace QLCHBanDienThoaiMoi.Services
         {
             var tk = await _context.TaiKhoan.FindAsync(id);
             if (tk == null) return false;
-            tk.TrangThai = TrangThaiTaiKhoan.Locked;
+            tk.TrangThai = TrangThaiTaiKhoan.Active;
             return await _context.SaveChangesAsync() > 0;
         }
 

@@ -11,7 +11,7 @@
         </a>
     </div>
 
-    <form asp-action="Create" method="post" onsubmit="return prepareSubmit()">
+    <form asp-action="Create" method="post" onsubmit="prepareSubmit()">
         <div class="row">
             <!-- Cột trái: Thông tin hóa đơn -->
             <div class="col-md-6">
@@ -26,7 +26,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="NgayBan" class="form-label fw-bold">Ngày bán</label>
-                                    <input asp-for="NgayBan" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                                    <input asp-for="NgayBan" class="form-control" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
                                 </div>
                             </div>
                             <div class="col-md-6">

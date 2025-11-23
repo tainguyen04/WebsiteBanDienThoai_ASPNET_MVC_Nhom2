@@ -15,7 +15,9 @@ namespace QLCHBanDienThoaiMoi.Services
         //Lấy tất cả nhân viên
         public async Task<List<NhanVien>> GetAllNhanVienAsync()
         {
-            return await _context.NhanVien.ToListAsync();
+            return await _context.NhanVien
+                                .Include(tk => tk.TaiKhoan)
+                                .ToListAsync();
         }
         //Lấy nhân viên theo Id
         public async Task<NhanVien?> GetNhanVienById(int id)
@@ -32,17 +34,6 @@ namespace QLCHBanDienThoaiMoi.Services
         public async Task<bool> UpdateNhanVienAsync(NhanVien nhanVien)
         {
             _context.NhanVien.Update(nhanVien);
-            return await _context.SaveChangesAsync() > 0;
-        }
-        //Xóa nhân viên
-        public async Task<bool> DeleteNhanVienAsync(int id)
-        {
-            var nhanVien = await _context.NhanVien.FindAsync(id);
-            if (nhanVien == null)
-            {
-                return false;
-            }
-            _context.NhanVien.Remove(nhanVien);
             return await _context.SaveChangesAsync() > 0;
         }
     }

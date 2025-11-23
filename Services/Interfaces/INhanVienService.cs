@@ -8,6 +8,5 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
         Task<NhanVien?> GetNhanVienById(int id);
         Task<bool> CreateNhanVienAsync(NhanVien nhanVien);
         Task<bool> UpdateNhanVienAsync(NhanVien nhanVien);
-        Task<bool> DeleteNhanVienAsync(int id);
     }
 }

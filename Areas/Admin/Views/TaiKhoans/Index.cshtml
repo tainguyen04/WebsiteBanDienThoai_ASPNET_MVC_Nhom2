@@ -22,7 +22,7 @@
                         <th width="150">Vai trò</th>
                         <th width="120">Trạng thái</th>
                         <th>Người dùng</th>
-                        <th width="180" class="text-center">Thao tác</th>
+                        <th width="180" class="text-center">Tùy chỉnh</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,28 +33,13 @@
                                 <div class="fw-bold">@item.TenDangNhap</div>
                             </td>
                             <td>
-                                @if (item.VaiTro == VaiTro.Admin)
-                                {
-                                    <span class="badge bg-danger"><i class="fas fa-crown me-1"></i>Quản trị</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-info"><i class="fas fa-user me-1"></i>Người dùng</span>
-                                }
+                               
+                                    @Html.Raw(EnumExtensions.GetBadgeHtml(item.VaiTro))
+                                
+                                
                             </td>
                             <td>
-                                @if (item.TrangThai == TrangThaiTaiKhoan.Active)
-                                {
-                                    <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Hoạt động</span>
-                                }
-                                else if (item.TrangThai == TrangThaiTaiKhoan.Locked)
-                                {
-                                    <span class="badge bg-danger"><i class="fas fa-lock me-1"></i>Đã khóa</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary"><i class="fas fa-ban me-1"></i>@item.TrangThai</span>
-                                }
+                                    @Html.Raw(EnumExtensions.GetBadgeHtml(item.TrangThai))
                             </td>
                             <td>
                                 @if (item.NhanVien != null)

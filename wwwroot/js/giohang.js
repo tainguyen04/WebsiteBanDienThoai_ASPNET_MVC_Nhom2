@@ -1,5 +1,4 @@
 ﻿
-
 // Hiển thị thông báo từ TempData
 if (typeof ThongBao !== 'undefined' && ThongBao) {
     Swal.fire({
@@ -15,7 +14,7 @@ if (typeof ThongBao !== 'undefined' && ThongBao) {
 }
 
 // Hàm xác nhận xóa
-function confirmDelete(button, entityName) {
+function confirmDeleted(button, entityName) {
     Swal.fire({
         icon: 'error',
         title: 'Bạn có chắc muốn xóa?',

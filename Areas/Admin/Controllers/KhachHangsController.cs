@@ -101,17 +101,6 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
 
         
 
-        // POST: Admin/KhachHangs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var khachHang = await _khachHangService.DeleteKhachHangAsync(id);
-            if (!khachHang)
-            {
-                return NotFound();
-            }
-            return RedirectToAction(nameof(Index));
-        }
+        
     }
 }
