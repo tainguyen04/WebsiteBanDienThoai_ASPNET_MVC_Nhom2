@@ -1,0 +1,110 @@
+﻿@model IEnumerable<QLCHBanDienThoaiMoi.Models.PhieuBaoHanh>
+
+@{
+    ViewData["Title"] = "Quản lý Phiếu bảo hành";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-gold"><i class="fas fa-shield-alt me-2"></i>Quản lý Phiếu bảo hành</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Thêm phiếu mới
+    </a>
+</div>
+
+<div class="admin-table">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr class="text-center">
+                    <th width="100">Mã HĐ</th>
+                    <th width="200">Sản phẩm</th>
+                    <th width="120">Số lượng</th>
+                    <th width="150">Ngày lập</th>
+                    <th width="150">Ngày hết hạn</th>
+                    <th width="150">Trạng thái</th>
+                    <th width="160">Tùy chỉnh</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center fw-bold">@item.HoaDonBanId</td>
+
+                        <td>
+                            <div class="fw-bold">@item.ChiTietHoaDonBan?.SanPham?.TenSanPham</div>
+                            <small class="text-muted">SP ID: @item.SanPhamId</small>
+                        </td>
+
+                        <td class="text-center">
+                            @item.ChiTietHoaDonBan?.SoLuong ?? 0
+                        </td>
+
+                        <td class="text-center">
+                            @item.NgayLap.ToString("dd/MM/yyyy")
+                        </td>
+
+                        <td class="text-center">
+                            @item.NgayHetHan.ToString("dd/MM/yyyy")
+                        </td>
+
+                        <td class="text-center">
+                            @if (item.TrangThai == QLCHBanDienThoaiMoi.Models.TrangThaiBaoHanh.DangBaoHanh)
+                            {
+                                <span class="badge bg-success">Đang bảo hành</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Hết hạn</span>
+                            }
+                        </td>
+
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <button class="btn btn-link btn-sm text-muted p-0" type="button"
+                                        data-bs-toggle="dropdown" title="Thao tác" style="border: none; background: none;">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end position-absolute">
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-action="Details"
+                                           asp-route-hoaDonBanId="@item.HoaDonBanId"
+                                           asp-route-sanPhamId="@item.SanPhamId">
+                                            <i class="fas fa-eye me-2"></i>Chi tiết
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-action="Edit"
+                                           asp-route-hoaDonBanId="@item.HoaDonBanId"
+                                           asp-route-sanPhamId="@item.SanPhamId">
+                                            <i class="fas fa-edit me-2"></i>Sửa
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <form asp-action="Delete"
+                                              method="post"
+                                              class="d-inline"
+                                              asp-route-hoaDonBanId="@item.HoaDonBanId"
+                                              asp-route-sanPhamId="@item.SanPhamId">
+                                            <button type="button" class="dropdown-item text-danger"
+                                                    onclick="confirmDelete(event,this, 'HĐ:@item.HoaDonBanId - SP:@item.SanPhamId')">
+                                                <i class="fas fa-trash me-2"></i>Xóa
+                                            </button>
+                                        </form>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
