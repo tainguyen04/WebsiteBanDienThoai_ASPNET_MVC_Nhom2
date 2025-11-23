@@ -9,9 +9,8 @@ using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services.Interfaces;
 
-namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
+namespace QLCHBanDienThoaiMoi.Controllers
 {
-    [Area("Admin")]
     public class KhachHangsController : Controller
     {
         private readonly IKhachHangService _khachHangService;
@@ -21,13 +20,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
             _khachHangService = khachHangService;
         }
 
-        // GET: Admin/KhachHangs
-        public async Task<IActionResult> Index()
-        {
-            return View(await _khachHangService.GetAllKhachHangAsync());
-        }
-
-        // GET: Admin/KhachHangs/Details/5
+        // GET: KhachHangs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,10 +36,7 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
 
             return View(khachHang);
         }
-
-        
-
-        // GET: Admin/KhachHangs/Edit/5
+        // GET: KhachHangs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -62,12 +52,12 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
             return View(khachHang);
         }
 
-        // POST: Admin/KhachHangs/Edit/5
+        // POST: KhachHangs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, KhachHang khachHang)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,TenKhachHang,DiaChi,SoDienThoai,Email")] KhachHang khachHang)
         {
             if (id != khachHang.Id)
             {
@@ -81,22 +71,22 @@ namespace QLCHBanDienThoaiMoi.Areas.Admin.Controllers
                     var kh = await _khachHangService.UpdateKhachHangAsync(khachHang);
                     if (!kh)
                     {
-                        return NotFound();
+                        return BadRequest();
                     }
                     else
                     {
-                        TempData["SuccessMessage"] = "Cập nhật thông tin khách hàng thành công";
+                        TempData["SuccessMessage"] = "Cập nhật thông tin thành công";
                         return RedirectToAction("Details", new { id = khachHang.Id });
                     }
-                        
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     return NotFound();
                 }
-               
             }
             return View(khachHang);
-        }    
+        }
+
+        
     }
 }

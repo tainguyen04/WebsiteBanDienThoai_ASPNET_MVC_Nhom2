@@ -97,12 +97,14 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item" href="#">
+                                            <a class="dropdown-item" asp-controller="KhachHangs" asp-action="Edit" 
+                                                asp-route-id="@User.FindFirst("KhachHangId")?.Value">
                                                 <i class="fas fa-user-edit me-2"></i>Cập nhật thông tin
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="#">
+                                            <a class="dropdown-item" asp-controller="HoaDonBans" asp-action="Edit"
+                                                asp-route-id="@User.FindFirst("KhachHangId")?.Value">
                                                 <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
                                             </a>
                                         </li>
@@ -185,6 +187,13 @@
         var ThongBao = '@Html.Raw(TempData["ThongBao"])';
     </script>
 }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            var ThongBao = '@Html.Raw(TempData["SuccessMessage"])';
+        </script>
+    }
+
 
 <script src="~/js/giohang.js"></script>
 <script src="~/js/function.js" asp-append-version="true"></script>

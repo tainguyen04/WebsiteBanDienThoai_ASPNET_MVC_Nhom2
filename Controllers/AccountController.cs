@@ -47,7 +47,8 @@ namespace QLCHBanDienThoaiMoi.Controllers
             {
                 new Claim(ClaimTypes.Name, user.TenDangNhap),
                 new Claim(ClaimTypes.Role, user.VaiTro.ToString()),
-                new Claim("UserId", user.Id.ToString())
+                new Claim("UserId", user.Id.ToString()),
+                new Claim("KhachHangId", user.KhachHang?.Id.ToString() ?? "")
             };
 
             // Tạo danh tính
