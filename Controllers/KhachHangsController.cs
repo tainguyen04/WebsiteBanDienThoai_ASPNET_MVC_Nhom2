@@ -37,14 +37,13 @@ namespace QLCHBanDienThoaiMoi.Controllers
             return View(khachHang);
         }
         // GET: KhachHangs/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var userIdClaim = User.FindFirst("KhachHangId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return RedirectToAction("Index", "Home");
 
-            var khachHang = await _khachHangService.GetKhachHangById(id.Value);
+            var khachHang = await _khachHangService.GetKhachHangById(userId);
             if (khachHang == null)
             {
                 return NotFound();
@@ -57,17 +56,16 @@ namespace QLCHBanDienThoaiMoi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TenKhachHang,DiaChi,SoDienThoai,Email")] KhachHang khachHang)
+        public async Task<IActionResult> Edit([Bind("Id,TenKhachHang,DiaChi,SoDienThoai,Email")] KhachHang khachHang)
         {
-            if (id != khachHang.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var userIdClaim = User.FindFirst("KhachHangId")?.Value;
+                    if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                        return RedirectToAction("Index", "Home");
+                    khachHang.Id = userId;
                     var kh = await _khachHangService.UpdateKhachHangAsync(khachHang);
                     if (!kh)
                     {
@@ -76,7 +74,7 @@ namespace QLCHBanDienThoaiMoi.Controllers
                     else
                     {
                         TempData["SuccessMessage"] = "Cập nhật thông tin thành công";
-                        return RedirectToAction("Details", new { id = khachHang.Id });
+                        return RedirectToAction("Details", new { id = userId });
                     }
                 }
                 catch (DbUpdateConcurrencyException)
@@ -86,7 +84,5 @@ namespace QLCHBanDienThoaiMoi.Controllers
             }
             return View(khachHang);
         }
-
-        
     }
 }

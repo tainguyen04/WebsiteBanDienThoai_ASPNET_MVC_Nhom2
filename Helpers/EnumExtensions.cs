@@ -42,6 +42,15 @@ namespace QLCHBanDienThoaiMoi.Helpers
                 _ => "<span class='badge bg-secondary'>Không xác định</span>"
             };
         }
+        public static string GetBadgeHtml(TrangThaiBaoHanh trangThai)
+        {
+            return trangThai switch
+            {
+                TrangThaiBaoHanh.HetHan => "<span class='badge bg-danger'>Hết hạn</span>",
+                TrangThaiBaoHanh.DangBaoHanh => "<span class='badge bg-success'>Đang bảo hành</span>",
+                _ => "<span class='badge bg-secondary'>Không xác định</span>"
+            };
+        }
 
     }
 }

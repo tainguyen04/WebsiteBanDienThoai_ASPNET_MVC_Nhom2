@@ -5,7 +5,7 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
 {
     public interface ITaiKhoanService
     {
-        TaiKhoan? DangNhap(string username, string password);
+        Task<TaiKhoan?> DangNhap(string username, string password);
         Task<bool> DangKyAsync(TaiKhoan tk, KhachHang kh,string sessionId);
         Task<bool> KiemTraTenDangNhap(string username);
         Task<bool> ResetMatKhauAsync(int id,string passWord);
@@ -16,5 +16,6 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
         Task<bool> DeleteTaiKhoanAsync(int? id);
         Task<bool> LockTaiKhoanAsync(int  id);
         Task<bool> UnlockTaiKhoanAsync(int id);
+        Task<bool> ChangePasswordAsync(int id,string oldPassword, string newPassword);
     }
 }

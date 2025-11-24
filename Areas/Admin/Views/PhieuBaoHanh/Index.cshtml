@@ -37,7 +37,7 @@
                         </td>
 
                         <td class="text-center">
-                            @item.ChiTietHoaDonBan?.SoLuong ?? 0
+                            @item.ChiTietHoaDonBan?.SoLuong
                         </td>
 
                         <td class="text-center">
@@ -77,14 +77,6 @@
                                         </a>
                                     </li>
 
-                                    <li>
-                                        <a class="dropdown-item"
-                                           asp-action="Edit"
-                                           asp-route-hoaDonBanId="@item.HoaDonBanId"
-                                           asp-route-sanPhamId="@item.SanPhamId">
-                                            <i class="fas fa-edit me-2"></i>Sửa
-                                        </a>
-                                    </li>
 
                                     <li>
                                         <form asp-action="Delete"

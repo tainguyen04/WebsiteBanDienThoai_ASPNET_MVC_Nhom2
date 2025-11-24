@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.product-checkbox:checked').forEach(checkbox => {
                 selectedIds.push(checkbox.getAttribute('data-id'));
             });
+            console.log("Selected IDs:", selectedIds);
             if (selectedIds.length === 0) {
                 e.preventDefault();
                 Swal.fire('Thông báo', 'Vui lòng chọn ít nhất 1 sản phẩm để thanh toán', 'warning');

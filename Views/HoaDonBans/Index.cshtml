@@ -1,0 +1,78 @@
+﻿@model IEnumerable<QLCHBanDienThoaiMoi.Models.HoaDonBan>
+
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary"><i class="fas fa-history me-2"></i>Lịch sử đơn hàng của tôi</h2>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Tiếp tục mua hàng
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Bạn chưa có đơn hàng nào</h5>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-primary mt-3">
+                        <i class="fas fa-shopping-cart me-2"></i>Mua sắm ngay
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th>Ngày đặt</th>
+                                <th>Địa chỉ nhận hàng</th>
+                                <th class="text-end">Tổng tiền</th>
+                                <th>Phương thức TT</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>#@item.Id</strong>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted">@item.NgayBan.ToString("dd/MM/yyyy HH:mm")</span>
+                                    </td>
+                                    <td>
+                                        <small>@item.DiaChiNhanHang</small>
+                                    </td>
+                                    <td class="text-end fw-bold text-success">
+                                        @Html.FormatPrice(item.TongTien)
+                                    </td>
+                                    <td>
+                                        @Html.Raw(EnumExtensions.GetBadgeHtml(item.PhuongThucThanhToan))
+                                    </td>
+                                    <td>
+                                        @Html.Raw(EnumExtensions.GetBadgeHtml(item.TrangThai))
+                                    </td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-primary" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
