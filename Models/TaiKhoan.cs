@@ -1,4 +1,4 @@
-namespace QLCHBanDienThoaiMoi.Models
+﻿namespace QLCHBanDienThoaiMoi.Models
 {
     public class TaiKhoan
     {
@@ -12,10 +12,9 @@ namespace QLCHBanDienThoaiMoi.Models
     }
     public enum VaiTro
     {
-		KhachHang = 0,
-		NhanVien = 1,
-		Admin = 2
-	}
+        User,
+        Admin
+    }
     public enum TrangThaiTaiKhoan
     {
         Active,
