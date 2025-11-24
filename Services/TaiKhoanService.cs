@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QLCHBanDienThoaiMoi.Data;
 using QLCHBanDienThoaiMoi.DTO;
+using QLCHBanDienThoaiMoi.Helpers;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services.Interfaces;
 using System.Security.Cryptography;
@@ -12,11 +13,13 @@ namespace QLCHBanDienThoaiMoi.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IGioHangService _gioHangService;
+        private readonly SessionHelper _sessionHelper;
 
-        public TaiKhoanService(ApplicationDbContext context,IGioHangService gioHangService)
+        public TaiKhoanService(ApplicationDbContext context,IGioHangService gioHangService,SessionHelper sessionHelper)
         {
             _context = context;
             _gioHangService = gioHangService;
+            _sessionHelper = sessionHelper;
         }
 
         // ============================
@@ -32,17 +35,23 @@ namespace QLCHBanDienThoaiMoi.Services
         // ============================
         // 🔐 Đăng nhập
         // ============================
-        public TaiKhoan? DangNhap(string username, string password)
+        public async Task<TaiKhoan?> DangNhap(string username, string password)
         {
             string passHash = HashPassword(password);
 
-            return _context.TaiKhoan
-                .Include(x => x.KhachHang)
-                .Include(x => x.NhanVien)
-                .FirstOrDefault(x =>
-                    x.TenDangNhap == username &&
-                    x.MatKhau == passHash &&
-                    x.TrangThai == TrangThaiTaiKhoan.Active);
+            var taiKhoan =  await _context.TaiKhoan
+                                    .Include(x => x.KhachHang)
+                                    .Include(x => x.NhanVien)
+                                    .FirstOrDefaultAsync(x =>
+                                        x.TenDangNhap == username &&
+                                        x.MatKhau == passHash &&
+                                        x.TrangThai == TrangThaiTaiKhoan.Active);
+            if(taiKhoan != null && taiKhoan.KhachHang != null)
+            {
+                var sessionId = _sessionHelper.EnsureSessionIdExists();
+                await _gioHangService.MergeCartAsync(sessionId, taiKhoan.KhachHang.Id);
+            }
+            return taiKhoan;
         }
 
         // ============================
@@ -65,7 +74,7 @@ namespace QLCHBanDienThoaiMoi.Services
             await _context.SaveChangesAsync();
             //Tạo giỏ hàng
             await _gioHangService.CreateGioHangAsync(null,kh.Id);
-            if (string.IsNullOrEmpty(sessionId))
+            if (!string.IsNullOrEmpty(sessionId))
                 await _gioHangService.MergeCartAsync(sessionId, kh.Id);
             return true;
         }
@@ -191,6 +200,19 @@ namespace QLCHBanDienThoaiMoi.Services
             if (tk == null) return false;
             tk.MatKhau = HashPassword(passWord);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> ChangePasswordAsync(int id, string oldPassword, string newPassword)
+        {
+            var taiKhoan = await _context.TaiKhoan.FindAsync(id);
+            if(taiKhoan == null) return false;
+            if(string .IsNullOrEmpty(oldPassword) || string.IsNullOrEmpty(newPassword)) return false;
+            if(taiKhoan.MatKhau == HashPassword(oldPassword))
+            {
+                taiKhoan.MatKhau = HashPassword(newPassword);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            return false;
         }
     }
 }

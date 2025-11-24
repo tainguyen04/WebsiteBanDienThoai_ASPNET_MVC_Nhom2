@@ -1,105 +1,129 @@
 ﻿@model QLCHBanDienThoaiMoi.Models.HoaDonBan
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Xác nhận đơn hàng";
+    var khachHang = ViewBag.KhachHang; // Lấy khách hàng từ ViewBag
 }
 
 <div class="container mt-4">
     <div class="row">
-        <!-- Cột trái: thông tin hóa đơn -->
+        <!-- Cột trái: Form nhập thông tin -->
         <div class="col-md-6 border-end">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="text-primary mb-3">Thông tin hóa đơn</h5>
-                    <dl class="row mb-0">
-                        <dt class="col-sm-5">Ngày bán:</dt>
-                        <dd class="col-sm-7">@Model.NgayBan.ToString("dd/MM/yyyy HH:mm")</dd>
+                    <h5 class="text-primary mb-3">Thông tin giao hàng</h5>
 
-                        <dt class="col-sm-5">Khách hàng:</dt>
-                        <dd class="col-sm-7">@((Model.KhachHang?.TenKhachHang) ?? "Khách lẻ")</dd>
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="selectedCartItems" value="@ViewBag.SelectedCartItems" />
 
-                        <dt class="col-sm-5">Số điện thoại:</dt>
-                        <dd class="col-sm-7">@((Model.KhachHang?.SoDienThoai))</dd>
+                        <!-- Địa chỉ nhận hàng -->
+                        <div class="mb-3">
+                            <label asp-for="DiaChiNhanHang" class="form-label fw-bold">Địa chỉ nhận hàng *</label>
+                            <textarea asp-for="DiaChiNhanHang" class="form-control" rows="3"
+                                      placeholder="Nhập địa chỉ nhận hàng..." required></textarea>
+                            <span asp-validation-for="DiaChiNhanHang" class="text-danger"></span>
+                        </div>
 
-                        <dt class="col-sm-5">Địa chỉ nhận hàng:</dt>
-                        <dd class="col-sm-7">
-                            @((!string.IsNullOrEmpty(Model.DiaChiNhanHang)
-                                ? Model.DiaChiNhanHang
-                                : Model.KhachHang?.DiaChi))
-                        </dd>
-
-                        <dt class="col-sm-5">Phương thức thanh toán:</dt>
-                        <dd class="col-sm-7">
-                            <div class="w-100">
+                        <!-- Phương thức thanh toán -->
+                        <div class="mb-3">
+                            <label asp-for="PhuongThucThanhToan" class="form-label fw-bold">Phương thức thanh toán *</label>
+                            <div>
                                 @foreach (var item in Html.GetEnumSelectList<PhuongThucThanhToan>())
                                 {
-                                    <div class="form-check py-1 w-100">
+                                    <div class="form-check py-1">
                                         <input class="form-check-input"
                                                type="radio"
                                                asp-for="PhuongThucThanhToan"
                                                value="@item.Value"
-                                               id="pttt_@item.Value" />
-                                        <label class="form-check-label w-100" for="pttt_@item.Value">
+                                               id="pttt_@item.Value"
+                                               required />
+                                        <label class="form-check-label" for="pttt_@item.Value">
                                             @item.Text
                                         </label>
                                     </div>
                                 }
                             </div>
                             <span asp-validation-for="PhuongThucThanhToan" class="text-danger"></span>
-                        </dd>
+                        </div>
 
-                        <dt class="col-sm-5">Trạng thái thanh toán:</dt>
-                        <dd class="col-sm-7">
-                            @Html.Raw(EnumExtensions.GetBadgeHtml(Model.TrangThai))
-                        </dd>
-                    </dl>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success w-100 py-2">
+                                <i class="fas fa-check-circle me-2"></i>Xác nhận đặt hàng
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- Cột phải: chi tiết sản phẩm -->
+        <!-- Cột phải: Xem lại sản phẩm -->
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="text-primary mb-3">Sản phẩm trong đơn hàng</h5>
-                    @foreach (var ct in Model.ChiTietHoaDonBans)
-                    {
-                        <div class="d-flex align-items-center border-bottom py-3">
-                            <img src="~/images/@ct.SanPham?.HinhAnh"
-                                 alt="@ct.SanPham?.TenSanPham"
-                                 style="width:60px; height:60px; object-fit:cover;" />
 
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">@ct.SanPham?.TenSanPham</h6>
-                                <p class="mb-1 text-muted">Số lượng: @ct.SoLuong</p>
-                                <p class="mb-0 text-muted">Giá bán: @Html.FormatPrice(ct.GiaBan)</p>
+                    @if (ViewBag.SelectedItems != null)
+                    {
+                        foreach (var item in ViewBag.SelectedItems)
+                        {
+                            <div class="d-flex align-items-center border-bottom py-3">
+                                <img src="~/images/@item.HinhAnh"
+                                     alt="@item.TenSanPham"
+                                     class="rounded me-3"
+                                     style="width:60px; height:60px; object-fit:cover;" />
+
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">@item.TenSanPham</h6>
+                                    <p class="mb-1 text-muted">Số lượng: @item.SoLuong</p>
+                                    <p class="mb-0 text-muted">Giá bán: @Html.FormatPrice((decimal)item.GiaKhuyenMai)</p>
+                                </div>
+
+                                <div class="text-end">
+                                    <strong class="text-danger">
+                                        @Html.FormatPrice((decimal)(item.SoLuong * item.GiaKhuyenMai))
+                                    </strong>
+                                </div>
                             </div>
-                            <div class="text-end">
-                                <strong class="text-danger">Thành tiền: @Html.FormatPrice(ct.ThanhTien)</strong>
-                            </div>
+                        }
+
+                        <div class="text-end mt-3 border-top pt-2">
+                            <strong>Tổng tiền: </strong>
+                            <span class="text-danger fw-bold fs-5">
+                                @Html.FormatPrice((decimal)(ViewBag.TotalAmount))
+                            </span>
                         </div>
                     }
-                    <div class="text-end mt-3 border-top pt-2">
-                        <strong>Tổng tiền: </strong>
-                        <span class="text-danger fw-bold">@Html.FormatPrice(Model.ChiTietHoaDonBans.Sum(ct => ct.ThanhTien))</span>
-                    </div>
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                            <p>Không có sản phẩm nào được chọn</p>
+                        </div>
+                    }
                 </div>
             </div>
-            <br />
-            <div class="d-flex justify-content-end mt-4">
-                @if (Model.TrangThai == TrangThaiHoaDon.ChuaHoanThanh)
-                {
-                    <form asp-action="Create" asp-controller="HoaDonBans" method="post">
-                        <input type="hidden" name="selectedCartItems" value="@ViewBag.SelectedCartItems" />
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-circle"></i> Xác nhận thanh toán
-                        </button>
-                    </form>
-                }
+
+            <!-- Thông tin khách hàng -->
+            <div class="card shadow-sm mt-3">
+                <div class="card-body">
+                    <h6 class="text-primary mb-3">Thông tin khách hàng</h6>
+                    <div class="row">
+                        <div class="col-sm-4 fw-bold">Tên:</div>
+                        <div class="col-sm-8">@khachHang?.TenKhachHang</div>
+
+                        <div class="col-sm-4 fw-bold">SĐT:</div>
+                        <div class="col-sm-8">@khachHang?.SoDienThoai</div>
+
+                        <div class="col-sm-4 fw-bold">Email:</div>
+                        <div class="col-sm-8">@khachHang?.Email</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

@@ -89,5 +89,21 @@ namespace QLCHBanDienThoaiMoi.Services
             _context.HoaDonBan.Update(hoaDonBan);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<List<HoaDonBan>> GetHoaDonBanByUserAsync(int userId)
+        {
+            return await _context.HoaDonBan
+                                .Where(hd => hd.KhachHangId == userId)
+                                .ToListAsync();
+        }
+
+        public async Task<bool> UpdateDiaChiNhanHangAsync(int id, int userId, string diaChiNhanHang)
+        {
+            var hoaDon = await _context.HoaDonBan.FindAsync(id);
+            if(hoaDon == null) return false;
+            if(hoaDon.KhachHangId == userId) return false;
+            hoaDon.DiaChiNhanHang = diaChiNhanHang;
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

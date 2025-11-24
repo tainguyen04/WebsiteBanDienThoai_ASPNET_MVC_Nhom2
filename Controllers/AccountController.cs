@@ -5,6 +5,7 @@ using System.Security.Claims;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services.Interfaces;
 using QLCHBanDienThoaiMoi.Helpers;
+using QLCHBanDienThoaiMoi.Services;
 
 namespace QLCHBanDienThoaiMoi.Controllers
 {
@@ -34,7 +35,7 @@ namespace QLCHBanDienThoaiMoi.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            var user = _taiKhoanService.DangNhap(username, password);
+            var user = await _taiKhoanService.DangNhap(username, password);
 
             if (user == null)
             {
@@ -47,9 +48,16 @@ namespace QLCHBanDienThoaiMoi.Controllers
             {
                 new Claim(ClaimTypes.Name, user.TenDangNhap),
                 new Claim(ClaimTypes.Role, user.VaiTro.ToString()),
-                new Claim("UserId", user.Id.ToString()),
-                new Claim("KhachHangId", user.KhachHang?.Id.ToString() ?? "")
+                new Claim("UserId", user.Id.ToString())
             };
+            if(user.KhachHang != null)
+            {
+                claims.Add(new Claim("KhachHangId", user.KhachHang?.Id.ToString() ?? ""));
+            }
+            if (user.NhanVien != null)
+            {
+                claims.Add(new Claim("NhanVienId", user.NhanVien.Id.ToString()));
+            }
 
             // Tạo danh tính
             var claimsIdentity = new ClaimsIdentity(
@@ -129,6 +137,47 @@ namespace QLCHBanDienThoaiMoi.Controllers
 
             TempData["ThongBao"] = "Đăng ký thành công!";
             return RedirectToAction("Login");
+        }
+        // GET: KhachHangs/Edit/5
+        public async Task<IActionResult> ChangePassword()
+        {
+            var userIdClaim = User.FindFirst("KhachHangId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return RedirectToAction("Login", "Account");
+
+            var taiKhoan = await _taiKhoanService.GetTaiKhoanByIdAsync(userId);
+            if (taiKhoan == null)
+            {
+                return NotFound();
+            }
+            return View(taiKhoan);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
+        {
+
+            try
+            {
+                var userIdClaim = User.FindFirst("KhachHangId")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                    return RedirectToAction("Login","Account");
+
+                var taiKhoan = await _taiKhoanService.ChangePasswordAsync(userId,oldPassword, newPassword);
+                if (!taiKhoan)
+                {
+                    return RedirectToAction("ChangePassword", "Account");
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Đổi mật khẩu thành công";
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
 
         // ---------------------------------------------------

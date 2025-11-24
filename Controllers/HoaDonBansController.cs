@@ -20,14 +20,68 @@ namespace QLCHBanDienThoaiMoi.Controllers
         private readonly IGioHangService _gioHangService;
         private readonly SessionHelper _sessionHelper;
         private readonly IPhieuBaoHanhService _phieuBaoHanhService;
-        public HoaDonBansController(IHoaDonBanService hoaDonBanService, IGioHangService gioHangService, SessionHelper sessionHelper, IPhieuBaoHanhService phieuBaoHanhService)
+        private readonly IKhachHangService _khachHangService;
+        public HoaDonBansController(IHoaDonBanService hoaDonBanService, IGioHangService gioHangService, SessionHelper sessionHelper, IPhieuBaoHanhService phieuBaoHanhService,IKhachHangService khachHangService)
         {
             _hoaDonBanService = hoaDonBanService;
             _gioHangService = gioHangService;
             _sessionHelper = sessionHelper;
             _phieuBaoHanhService = phieuBaoHanhService;
+            _khachHangService = khachHangService;
         }
+        public async Task<IActionResult> Index()
+        {
+            var userIdClaim = User.FindFirst("KhachHangId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return RedirectToAction("Login", "Account");
+            return View(await _hoaDonBanService.GetHoaDonBanByUserAsync(userId));
+        }
+        public async Task<IActionResult> Details(int id)
+        {
+            var userIdClaim = User.FindFirst("KhachHangId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return RedirectToAction("Index", "Account");
+            var hd = await _hoaDonBanService.GetHoaDonBanAsync(id);
+            if(hd == null) return NotFound();
+            if (hd.KhachHangId != userId) 
+                return RedirectToAction("Index", "HoaDonBans");
 
+            return View(hd);
+        }
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userIdClaim = User.FindFirst("KhachHangId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return RedirectToAction("Login", "Account");
+            var hd = await _hoaDonBanService.GetHoaDonBanAsync(id); 
+            if(hd == null) return NotFound();
+            if (hd.KhachHangId != userId)
+                return RedirectToAction("Index", "HoaDonBans");
+            return View(hd);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id,string diaChiNhanHang)
+        {
+            var userIdClaim = User.FindFirst("KhachHangId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return RedirectToAction("Login", "Account");
+            if (string.IsNullOrWhiteSpace(diaChiNhanHang))
+            {
+                TempData["ErrorMessage"] = "Địa chỉ không được để trống";
+                return View();
+            }
+            var hoaDon = await _hoaDonBanService.UpdateDiaChiNhanHangAsync(id, userId, diaChiNhanHang);
+                if (!hoaDon)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Cập nhật địa chỉ giao hàng thành công";
+                    return RedirectToAction(nameof(Index));
+                }
+        }
         [HttpGet]
         public IActionResult Success(int id)
         {
@@ -37,42 +91,48 @@ namespace QLCHBanDienThoaiMoi.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(string selectedCartItems)
         {
-            if (string.IsNullOrEmpty(selectedCartItems))
-            {
-                return RedirectToAction("Index", "GioHangs");
-            }
-            var cartItemIds = selectedCartItems.Split(',')
-               .Select(idStr => int.TryParse(idStr, out var id) ? (int?)id : null)
-               .Where(id => id.HasValue)
-               .ToList();
-            if (!cartItemIds.Any())
-            {
-                return RedirectToAction("Index", "GioHangs");
-            }
-            var sessionId = _sessionHelper.EnsureSessionIdExists();
+            var userId = _sessionHelper.GetUserIdFromClaim();
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            var cartItems = await _gioHangService.GetGioHangAsync(sessionId, null);
+            if (string.IsNullOrEmpty(selectedCartItems))
+                return RedirectToAction("Index", "GioHangs");
+
+            var cartItemIds = selectedCartItems.Split(',')
+              .Select(idStr => int.TryParse(idStr, out var id) ? (int?)id : null)
+              .Where(id => id.HasValue)
+              .ToList();
+
+            if (!cartItemIds.Any())
+                return RedirectToAction("Index", "GioHangs");
+
+            // Lấy toàn bộ chi tiết giỏ hàng
+            var cartItems = await _gioHangService.GetGioHangAsync(null, userId);
+            
+
             var selectedItems = cartItems
-                                .Where(ci => cartItemIds.Contains(ci.SanPhamId) && ci.SessionId == sessionId)
-                                .ToList();
+                .Where(ci => cartItemIds.Contains(ci.SanPhamId) && ci.KhachHangId == userId)
+                .ToList();
+
+            if (!selectedItems.Any())
+                //return RedirectToAction("Index", "GioHangs");
+                return BadRequest();
+
+            var khachHang = await _khachHangService.GetKhachHangById(userId.Value);
 
             var hoaDonBan = new HoaDonBan
             {
-                NgayBan = DateTime.Now,
+                KhachHangId = userId.Value,
                 PhuongThucThanhToan = PhuongThucThanhToan.TienMat,
-                TrangThai = TrangThaiHoaDon.ChuaHoanThanh,
-                DiaChiNhanHang = "",
-                ChiTietHoaDonBans = selectedItems.Select(cartItems => new ChiTietHoaDonBan
-                {
-                    SanPhamId = cartItems.SanPhamId,
-                    SoLuong = cartItems.SoLuong,
-                    GiaBan = (int)cartItems.GiaKhuyenMai,
-                }).ToList()
+                DiaChiNhanHang = khachHang?.DiaChi ?? ""
             };
-            // Gửi thêm danh sách id sản phẩm được chọn sang View
-            ViewBag.SelectedCartItems = string.Join(",", cartItemIds);
+            ViewBag.KhachHang = khachHang;  
+            ViewBag.SelectedItems = selectedItems;
+            ViewBag.TotalAmount = selectedItems.Sum(ci => ci.SoLuong * ci.GiaKhuyenMai);
+            ViewBag.SelectedCartItems = selectedCartItems;
+
             return View(hoaDonBan);
         }
+
 
 
         // POST: HoaDonBans/Create
@@ -82,50 +142,82 @@ namespace QLCHBanDienThoaiMoi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(HoaDonBan hoaDonBan, string selectedCartItems)
         {
-            var sessionId = _sessionHelper.EnsureSessionIdExists();
-            var gioHang = await _gioHangService.GetGioHangAsync(sessionId, null);
-            if (gioHang == null)
+            var userId = _sessionHelper.GetUserIdFromClaim();
+            if (userId == null) return RedirectToAction("Login", "Account");
+
+            if (string.IsNullOrEmpty(selectedCartItems))
             {
-                return RedirectToAction("Index", "GioHangs", new { message = "Your cart is empty." });
+                TempData["ErrorMessage"] = "Không có sản phẩm được chọn";
+                return RedirectToAction("Index", "GioHangs");
             }
-            var cartItemIds = selectedCartItems.Split(',')
-               .Select(idStr => int.TryParse(idStr, out var id) ? (int?)id : null)
-               .Where(id => id.HasValue)
-               .ToList();
-            if (!cartItemIds.Any())
-            {
-                return RedirectToAction("Index", "GioHang");
-            }
-            var selectedItems = gioHang
-                                .Where(ci => cartItemIds.Contains(ci.SanPhamId) && ci.SessionId == sessionId)
-                                .ToList();
-            hoaDonBan.ChiTietHoaDonBans = selectedItems.Select(cartItems => new ChiTietHoaDonBan
-            {
-                SanPhamId = cartItems.SanPhamId,
-                SoLuong = cartItems.SoLuong,
-                GiaBan = (int)cartItems.GiaKhuyenMai,
-            }).ToList();
 
-            hoaDonBan.NgayBan = DateTime.Now;
-            hoaDonBan.TrangThai = TrangThaiHoaDon.HoanThanh;
-            hoaDonBan.TongTien = (int)hoaDonBan.ChiTietHoaDonBans.Sum(ct => ct.SoLuong * ct.GiaBan);
-
-            var result = await _hoaDonBanService.CreateHoaDonBanAsync(hoaDonBan, hoaDonBan.ChiTietHoaDonBans.ToList());
-
-            if (result)
+            try
             {
-                await _phieuBaoHanhService.CreateAsync(hoaDonBan.Id);
-                foreach (var cartItem in hoaDonBan.ChiTietHoaDonBans.ToList())
+                var cartItemIds = selectedCartItems.Split(',')
+                    .Where(x => int.TryParse(x, out _))
+                    .Select(int.Parse)
+                    .ToList();
+
+                // Lấy toàn bộ chi tiết giỏ hàng
+                var gioHang = await _gioHangService.GetGioHangAsync(null, userId);
+
+                if (gioHang == null || !gioHang.Any())
                 {
-                    await _gioHangService.DeletedSanPhamFromGioHangAsync(sessionId, null, cartItem.SanPhamId);
+                    TempData["ErrorMessage"] = "Giỏ hàng trống";
+                    return RedirectToAction("Index", "GioHangs");
                 }
-                return RedirectToAction("Success", new { id = hoaDonBan.Id });
+
+                // Lọc theo Id của ChiTietGioHang
+                var selectedItems = gioHang
+                    .Where(ci => cartItemIds.Contains(ci.SanPhamId))
+                    .ToList();
+
+                if (!selectedItems.Any())
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy sản phẩm được chọn";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+
+                // Gán thông tin hóa đơn
+                hoaDonBan.KhachHangId = userId.Value;
+                hoaDonBan.NgayBan = DateTime.Now;
+                hoaDonBan.TrangThai = TrangThaiHoaDon.ChuaHoanThanh;
+                hoaDonBan.TongTien = selectedItems.Sum(ci => (int)(ci.SoLuong * ci.GiaKhuyenMai));
+
+                // Tạo chi tiết hóa đơn từ chi tiết giỏ hàng
+                hoaDonBan.ChiTietHoaDonBans = selectedItems.Select(ci => new ChiTietHoaDonBan
+                {
+                    SanPhamId = ci.SanPhamId,
+                    SoLuong = ci.SoLuong,
+                    GiaBan = (int)ci.GiaKhuyenMai
+                }).ToList();
+
+                // Lưu hóa đơn
+                var result = await _hoaDonBanService.CreateHoaDonBanAsync(hoaDonBan, hoaDonBan.ChiTietHoaDonBans.ToList());
+
+                if (result)
+                {
+                    await _phieuBaoHanhService.CreateAsync(hoaDonBan.Id);
+
+                    // Xóa chi tiết giỏ hàng đã mua
+                    foreach (var item in selectedItems)
+                    {
+                        await _gioHangService.DeletedSanPhamFromGioHangAsync(null, userId, item.SanPhamId);
+                    }
+
+                    return RedirectToAction("Success", new { id = hoaDonBan.Id });
+                }
+
+                TempData["ErrorMessage"] = "Tạo hóa đơn thất bại";
+                return RedirectToAction("Create", new { selectedCartItems });
             }
-            else
+            catch
             {
-                return BadRequest("Failed to create sales invoice.");
+                TempData["ErrorMessage"] = "Có lỗi xảy ra khi tạo hóa đơn";
+                return RedirectToAction("Create", new { selectedCartItems });
             }
         }
+
 
     }
 }

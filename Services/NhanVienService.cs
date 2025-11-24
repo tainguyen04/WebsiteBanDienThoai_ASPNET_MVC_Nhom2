@@ -33,6 +33,7 @@ namespace QLCHBanDienThoaiMoi.Services
         //Cập nhật nhân viên
         public async Task<bool> UpdateNhanVienAsync(NhanVien nhanVien)
         {
+            if(nhanVien == null) return false;
             _context.NhanVien.Update(nhanVien);
             return await _context.SaveChangesAsync() > 0;
         }

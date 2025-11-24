@@ -97,19 +97,17 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item" asp-controller="KhachHangs" asp-action="Edit" 
-                                                asp-route-id="@User.FindFirst("KhachHangId")?.Value">
+                                            <a class="dropdown-item" asp-controller="KhachHangs" asp-action="Edit">
                                                 <i class="fas fa-user-edit me-2"></i>Cập nhật thông tin
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" asp-controller="HoaDonBans" asp-action="Edit"
-                                                asp-route-id="@User.FindFirst("KhachHangId")?.Value">
+                                            <a class="dropdown-item" asp-controller="HoaDonBans" asp-action="Index">
                                                 <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="#">
+                                            <a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">
                                                 <i class="fas fa-lock me-2"></i>Đổi mật khẩu
                                             </a>
                                         </li>

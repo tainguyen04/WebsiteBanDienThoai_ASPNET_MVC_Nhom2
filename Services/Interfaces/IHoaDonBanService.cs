@@ -10,5 +10,7 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
         Task<bool> CreateHoaDonBanAsync(HoaDonBan hoaDonBan, List<ChiTietHoaDonBan> chiTiet);
         Task<bool> DeleteHoaDonBanAsync(int id);
         Task<bool> UpdateHoaDonBanAsync(UpdateHoaDonBanDTO hoaDonBanDTO);
+        Task<List<HoaDonBan>> GetHoaDonBanByUserAsync(int userId);
+        Task<bool> UpdateDiaChiNhanHangAsync(int id,int userId,string diaChiNhanHang);
     }
 }

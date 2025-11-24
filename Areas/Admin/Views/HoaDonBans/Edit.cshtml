@@ -1,4 +1,4 @@
-﻿@model QLCHBanDienThoaiMoi.Models.HoaDonBan
+﻿@model QLCHBanDienThoaiMoi.DTO.UpdateHoaDonBanDTO
 
 @{
     ViewData["Title"] = "Chỉnh sửa hóa đơn";
@@ -13,195 +13,31 @@
             <i class="fas fa-arrow-left"></i> Quay lại chi tiết
         </a>
     </div>
+<form asp-action="Edit" method="post">
 
-    <form asp-action="Edit">
-        <div class="row">
-            <!-- Cột trái: Thông tin không thể chỉnh sửa -->
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-info-circle"></i> Thông tin hóa đơn (Chỉ xem)
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-                        <input type="hidden" asp-for="Id" />
+    <!-- Id bắt buộc để controller biết hóa đơn nào -->
+    <input type="hidden" name="Id" value="@Model.Id" />
 
-                        <dl class="row mb-0">
-                            <dt class="col-sm-4">Mã hóa đơn:</dt>
-                            <dd class="col-sm-8 fw-bold text-primary">#@Model.Id</dd>
+    <div class="mb-3">
+        <label>Địa chỉ nhận hàng:</label>
+        <textarea name="DiaChiNhanHang" class="form-control" rows="3">
+            @Model.DiaChiNhanHang
+        </textarea>
+    </div>
 
-                            <dt class="col-sm-4">Ngày bán:</dt>
-                            <dd class="col-sm-8">@Model.NgayBan.ToString("dd/MM/yyyy HH:mm")</dd>
+    <div class="mb-3">
+        <label>Trạng thái hóa đơn:</label>
+        <select name="TrangThai" class="form-control">
+            @foreach (var tt in Enum.GetValues(typeof(TrangThaiHoaDon)))
+            {
+                <option value="@tt" selected="@(Model.TrangThai == (TrangThaiHoaDon)tt)">
+                    @tt
+                </option>
+            }
+        </select>
+    </div>
 
-                            <dt class="col-sm-4">Khách hàng:</dt>
-                            <dd class="col-sm-8">
-                                @if (Model.KhachHang != null)
-                                {
-                                    <span>@Model.KhachHang.TenKhachHang</span>
-                                    <br />
-                                    <small class="text-muted">@Model.KhachHang.SoDienThoai</small>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">Khách vãng lai</span>
-                                }
-                            </dd>
+    <button type="submit" class="btn btn-success">Cập nhật</button>
+</form>
 
-                            <dt class="col-sm-4">Nhân viên:</dt>
-                            <dd class="col-sm-8">
-                                @Model.NhanVien?.TenNhanVien
-                                <br />
-                                <small class="text-muted">@Model.NhanVien?.SoDienThoai</small>
-                            </dd>
-
-                            <dt class="col-sm-4">Tổng tiền:</dt>
-                            <dd class="col-sm-8 fw-bold text-danger fs-5">
-                                @Model.TongTien.ToString("N0") ₫
-                            </dd>
-
-                            <dt class="col-sm-4">Thanh toán:</dt>
-                            <dd class="col-sm-8">
-                                <span class="badge bg-info">@Model.PhuongThucThanhToan</span>
-                            </dd>
-                        </dl>
-
-                        <!-- Hidden fields cho các trường không được sửa -->
-                        <input type="hidden" asp-for="NgayBan" />
-                        <input type="hidden" asp-for="KhachHangId" />
-                        <input type="hidden" asp-for="NhanVienId" />
-                        <input type="hidden" asp-for="TongTien" />
-                        <input type="hidden" asp-for="PhuongThucThanhToan" />
-                    </div>
-                </div>
-
-                <!-- Danh sách sản phẩm (chỉ xem) -->
-                <div class="card shadow-sm mt-4">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-shopping-cart"></i> Danh sách sản phẩm (Chỉ xem)
-                        </h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th width="5%">#</th>
-                                        <th width="55%">Sản phẩm</th>
-                                        <th width="15%" class="text-center">Đơn giá</th>
-                                        <th width="10%" class="text-center">SL</th>
-                                        <th width="15%" class="text-end">Thành tiền</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Model.ChiTietHoaDonBans != null && Model.ChiTietHoaDonBans.Any())
-                                    {
-                                        var stt = 1;
-                                        foreach (var ct in Model.ChiTietHoaDonBans)
-                                        {
-                                            <tr>
-                                                <td>@stt</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        @if (!string.IsNullOrEmpty(ct.SanPham?.HinhAnh))
-                                                        {
-                                                            <img src="~/images/@ct.SanPham.HinhAnh"
-                                                                 alt="@ct.SanPham.TenSanPham"
-                                                                 class="me-3 rounded"
-                                                                 style="width: 40px; height: 40px; object-fit: cover;">
-                                                        }
-                                                        <div>
-                                                            <div class="fw-bold">@ct.SanPham?.TenSanPham</div>
-                                                            <small class="text-muted">Mã: @ct.SanPhamId</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">@Html.FormatPrice(ct.GiaBan)</td>
-                                                <td class="text-center">@ct.SoLuong</td>
-                                                <td class="text-end fw-bold text-danger">
-                                                    @Html.FormatPrice(ct.ThanhTien)
-                                                </td>
-                                            </tr>
-                                            stt++;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td colspan="5" class="text-center text-muted py-4">
-                                                <i class="fas fa-exclamation-circle"></i> Không có sản phẩm nào
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cột phải: Các trường có thể chỉnh sửa -->
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-edit"></i> Thông tin có thể chỉnh sửa
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Địa chỉ nhận hàng -->
-                        <div class="form-group mb-4">
-                            <label asp-for="DiaChiNhanHang" class="form-label fw-bold">Địa chỉ nhận hàng *</label>
-                            <textarea asp-for="DiaChiNhanHang" class="form-control" rows="4"
-                                      placeholder="Nhập địa chỉ nhận hàng mới..."></textarea>
-                            <span asp-validation-for="DiaChiNhanHang" class="text-danger small"></span>
-                            <div class="form-text">
-                                Địa chỉ hiện tại:
-                                <span class="fst-italic">
-                                    @(!string.IsNullOrEmpty(Model.DiaChiNhanHang)
-                                        ? Model.DiaChiNhanHang
-                                        : "Chưa có địa chỉ")
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Trạng thái -->
-                        <div class="form-group mb-4">
-                            <label asp-for="TrangThai" class="form-label fw-bold">Trạng thái hóa đơn *</label>
-                            <select asp-for="TrangThai" class="form-control">
-                                <option value="Chờ xác nhận">Chờ xác nhận</option>
-                                <option value="Đã xác nhận">Đã xác nhận</option>
-                                <option value="Đang giao hàng">Đang giao hàng</option>
-                                <option value="Hoàn thành">Hoàn thành</option>
-                                <option value="Đã hủy">Đã hủy</option>
-                            </select>
-                            <span asp-validation-for="TrangThai" class="text-danger small"></span>
-                            <div class="form-text">
-                                Trạng thái hiện tại: <span class="badge @Html.Raw(EnumExtensions.GetBadgeHtml(Model.TrangThai))">@Model.TrangThai</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Nút hành động -->
-                <div class="card shadow-sm mt-4">
-                    <div class="card-body">
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times"></i> Hủy bỏ
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save"></i> Cập nhật
-                            </button>
-                        </div>
-                        <div class="text-center mt-2">
-                            <small class="text-muted">Chỉ có thể thay đổi địa chỉ nhận hàng và trạng thái</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
 </div>

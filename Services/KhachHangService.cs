@@ -35,6 +35,7 @@ namespace QLCHBanDienThoaiMoi.Services
         //Cập nhật khách hàng
         public async Task<bool> UpdateKhachHangAsync(KhachHang khachHang)
         {
+            if(khachHang == null) return false;
             _context.KhachHang.Update(khachHang);
             return await _context.SaveChangesAsync() > 0;
         }

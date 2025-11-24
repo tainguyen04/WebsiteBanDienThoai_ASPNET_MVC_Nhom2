@@ -1,4 +1,5 @@
-﻿namespace QLCHBanDienThoaiMoi.Helpers
+﻿
+namespace QLCHBanDienThoaiMoi.Helpers
 {
     public class SessionHelper
     {
@@ -24,12 +25,19 @@
         }
         public int? GetKhachHangId()
         {
-            var session = _httpContextAccessor.HttpContext?.Session;
-            if (session == null)
-            {
-                throw new InvalidOperationException("Session is not available.");
-            }
-            return session.GetInt32("KhachHangId");
+            var claim = _httpContextAccessor.HttpContext?.User.FindFirst("KhachHangId");
+            if (claim == null) return null;
+            if(int.TryParse(claim.Value,out int id)) return id;
+            return null;
+        }
+        public int? GetUserIdFromClaim()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user == null) return null;
+            var userIdClaim = user.FindFirst("KhachHangId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return null;
+            return userId;
         }
     }
 }
