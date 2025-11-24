@@ -5,6 +5,7 @@ namespace QLCHBanDienThoaiMoi.DTO
     public class SanPhamDTO
     {
         public int Id { get; set; }
+        public int DanhMucId { get; set; }
         public string? TenSanPham { get; set; }
         public int GiaBan { get; set; }
         public int SoLuongTon { get; set; }

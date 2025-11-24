@@ -17,7 +17,7 @@ namespace QLCHBanDienThoaiMoi.Services
             _context = context;
             _danhMucSanPhamService = danhMucSanPhamService;
         }
-        // Updated method to fix CS8602: Dereference of a possibly null reference.
+        
         public async Task<List<SanPham>> GetSanPhamsAsync()
         {
             var sanPhams = await _context.SanPham
@@ -36,6 +36,7 @@ namespace QLCHBanDienThoaiMoi.Services
             return  sp.Select( s=> new SanPhamDTO
                                  {
                                      Id = s.Id,
+                                     DanhMucId = s.DanhMucId,
                                      TenSanPham = s.TenSanPham,
                                      GiaBan = s.GiaBan,
                                      HangSanXuat = s.HangSanXuat,
@@ -44,7 +45,10 @@ namespace QLCHBanDienThoaiMoi.Services
                                      TenKhuyenMai = s.KhuyenMai != null ? s.KhuyenMai.TenKhuyenMai : string.Empty,
                                      GiaKhuyenMai = s.KhuyenMai != null ? (decimal) s.GiaBan * (1 - s.KhuyenMai.GiaTri/100) : s.GiaBan,
                                      PhanTramKhuyenMai = s.KhuyenMai != null ? s.KhuyenMai.GiaTri : 0
-                                 }).ToList();
+                                 })
+                                .OrderByDescending(s => s.PhanTramKhuyenMai)
+                                .Take(10)
+                                .ToList();
         }
         //Tạo mới sản phẩm
         public async Task<bool> CreateSanPhamAsync(IFormFile file, SanPham sanPham)
@@ -213,5 +217,28 @@ namespace QLCHBanDienThoaiMoi.Services
                 .ToListAsync();
         }
 
+        public async Task<List<SanPhamDTO>> GetSanPhamSkipTakeAsync(int skip, int take)
+        {
+            var sp = await _context.SanPham
+                                       .Include(s => s.KhuyenMai)
+                                       .AsNoTracking()
+                                       .ToListAsync();
+            return sp.Select(s => new SanPhamDTO
+                            {
+                                Id = s.Id,
+                                TenSanPham = s.TenSanPham,
+                                GiaBan = s.GiaBan,
+                                HangSanXuat = s.HangSanXuat,
+                                MoTa = s.MoTa,
+                                HinhAnh = s.HinhAnh,
+                                TenKhuyenMai = s.KhuyenMai != null ? s.KhuyenMai.TenKhuyenMai : string.Empty,
+                                GiaKhuyenMai = s.KhuyenMai != null ? (decimal)s.GiaBan * (1 - s.KhuyenMai.GiaTri / 100) : s.GiaBan,
+                                PhanTramKhuyenMai = s.KhuyenMai != null ? s.KhuyenMai.GiaTri : 0
+                            })
+                            .OrderByDescending(s => s.PhanTramKhuyenMai)
+                            .Skip(skip)
+                            .Take(take)
+                            .ToList();
+        }
     }
 }

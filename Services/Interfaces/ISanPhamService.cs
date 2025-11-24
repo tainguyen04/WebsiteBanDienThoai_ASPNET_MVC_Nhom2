@@ -7,6 +7,7 @@ namespace QLCHBanDienThoaiMoi.Services.Interfaces
     {
         Task<List<SanPham>> GetSanPhamsAsync();
         Task<List<SanPhamDTO>> GetSanPhamHomePageAsync();
+        Task<List<SanPhamDTO>> GetSanPhamSkipTakeAsync(int skip,int take);
         Task<bool> CreateSanPhamAsync(IFormFile file, SanPham sanPham);
         Task<SanPham?> GetSanPhamByIdAsync(int? id);
         Task<bool> UpdateSanPhamAsync(IFormFile? file, SanPham sanPham);

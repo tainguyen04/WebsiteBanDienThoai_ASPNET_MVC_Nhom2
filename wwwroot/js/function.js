@@ -167,3 +167,22 @@ function prepareSubmit() {
     document.getElementById('chiTietHoaDonJson').value = JSON.stringify(products);
     return true;
 }
+
+
+//Load thêm sản phẩm
+var skip = 10;
+$("#loadMoreBtn").on("click", function () {
+    $.ajax({
+        url: '@Url.Action("LoadMoreProducts", "Home")',
+        type: "GET",
+        data: { skip: skip },
+        success: function (data) {
+            if (data.trim() === "") {
+                $("#loadMoreBtn").hide();
+            } else {
+                $("#sanPhamContainer").append(data);
+                skip += 10;
+            }
+        }
+    });
+});

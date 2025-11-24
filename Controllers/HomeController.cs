@@ -2,6 +2,7 @@
 using QLCHBanDienThoaiMoi.Helpers;
 using QLCHBanDienThoaiMoi.Models;
 using QLCHBanDienThoaiMoi.Services.Interfaces;
+using QLCHBanDienThoaiMoi.ViewModel;
 
 namespace QLCHBanDienThoaiMoi.Controllers
 {
@@ -25,20 +26,38 @@ namespace QLCHBanDienThoaiMoi.Controllers
         }
 
         // GET: Home
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? danhMucId)
         {
             // Load danh mục cho Navbar
             ViewBag.DanhMuc = await _danhMucService.GetAllAsync();
 
             // Load sản phẩm trang chủ
             var sanPhams = await _sanPhamService.GetSanPhamHomePageAsync();
+            var dm = await _sanPhamService.GetAllDanhMucAsync();
+            if(danhMucId.HasValue)
+                sanPhams = sanPhams.Where(sp => sp.DanhMucId == danhMucId).ToList();
+            var model = new HomeIndexViewModel
+            {
+                SanPham = sanPhams,
+                DanhMucSanPham = dm,
+            };
 
             // Xử lý giỏ hàng theo session
             string sessionId = _sessionHelper.EnsureSessionIdExists();
             int? khachHangId = _sessionHelper.GetKhachHangId();
             await _gioHangService.CreateGioHangAsync(sessionId, khachHangId);
+            var gioHang = await _gioHangService.GetGioHangAsync(sessionId, khachHangId);
+            int soSanPham = gioHang.Sum(ct => ct.SoLuong);
+            ViewBag.soSanPham = soSanPham;
+            return View(model);
+        }
+        public async Task<IActionResult> LoadMoreProducts(int skip = 0)
+        {
+            var moreProducts = await _sanPhamService.GetSanPhamSkipTakeAsync(skip, 10);
+            if (!moreProducts.Any())
+                return Content(""); // Không còn sản phẩm
 
-            return View(sanPhams);
+            return PartialView("_SanPhamCardPartial", moreProducts);
         }
 
         // GET: Home/Details/5

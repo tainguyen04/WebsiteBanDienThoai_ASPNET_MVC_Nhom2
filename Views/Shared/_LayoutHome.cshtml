@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - QLCHBanDienThoaiMoi</title>
+    <title>@ViewData["Title"] - ShopAmazon</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -22,7 +22,8 @@
 
             <!-- Logo -->
             <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index" style="margin-left:20px;">
-                QLCHBanDienThoaiMoi
+                    <i class="fa-brands fa-shopify" style="color: #74C0FC;"></i>
+                    ShopAmazon
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
@@ -37,36 +38,6 @@
                     <li class="nav-item">
                         <a class="nav-link active" asp-controller="Home" asp-action="Index">Trang chủ</a>
                     </li>
-
-                    <!-- Dropdown Danh Mục -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            Danh mục
-                        </a>
-                        <ul class="dropdown-menu shadow">
-
-                            @if (ViewBag.DanhMuc != null)
-                            {
-                                foreach (var dm in ViewBag.DanhMuc)
-                                {
-                                    <li>
-                                        <a class="dropdown-item"
-                                           asp-controller="SanPham"
-                                           asp-action="TheoDanhMuc"
-                                           asp-route-id="@dm.Id">
-                                            @dm.TenDanhMuc
-                                        </a>
-                                    </li>
-                                }
-                            }
-                            else
-                            {
-                                <li><span class="dropdown-item text-muted">Không có danh mục</span></li>
-                            }
-
-                        </ul>
-                    </li>
-
                 </ul>
 
                 <!-- Search -->
@@ -164,12 +135,45 @@
 </div>
 
 <!-- Footer -->
-<footer class="border-top footer text-muted mt-5 py-3">
-    <div class="container">
-        &copy; 2025 - QLCHBanDienThoaiMoi -
-        <a asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-</footer>
+    <footer class="bg-dark text-light mt-5 pt-5 pb-3">
+        <div class="container">
+            <div class="row">
+                <!-- Thông tin cửa hàng -->
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">QLCHBanDienThoaiMoi</h5>
+                    <p class="mb-1">Địa chỉ: 123 Đường ABC, TP. XYZ</p>
+                    <p class="mb-1">Hotline: 0123 456 789</p>
+                    <p>Email: support@qlchdienthoai.com</p>
+                </div>
+
+                ```
+                <!-- Liên kết nhanh -->
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">Liên kết</h5>
+                    <ul class="list-unstyled">
+                        <li><a asp-controller="Home" asp-action="Index" class="text-light text-decoration-none">Trang chủ</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy" class="text-light text-decoration-none">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Điều khoản</a></li>
+                    </ul>
+                </div>
+
+                <!-- Mạng xã hội -->
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">Theo dõi chúng tôi</h5>
+                    <a href="#" class="text-light me-2 fs-5"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-light me-2 fs-5"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-light me-2 fs-5"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-light fs-5"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                &copy; 2025 ShopAmazon. All rights reserved.
+            </div>
+        </div>
+        ```
+
+    </footer>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
