@@ -1,7 +1,7 @@
-# 🛒 Website Bán Hàng – ASP.NET Core MVC
+# 🛒 Website Bán Điện thoại – ASP.NET Core MVC
 
 ## 📌 1. Tổng quan dự án
-Dự án là một website bán hàng được xây dựng bằng ASP.NET Core MVC và Entity Framework Core với các chức năng chính:
+Dự án là một website bán điện thoại được xây dựng bằng ASP.NET Core MVC và Entity Framework Core với các chức năng chính:
 
 - Xem danh sách và chi tiết sản phẩm  
 - Giỏ hàng dùng Session + User (tự động đồng bộ khi đăng nhập)  
